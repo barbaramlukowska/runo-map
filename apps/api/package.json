@@ -1,0 +1,17 @@
+{
+  "name": "@mushroom-map/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mushroom-map/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@mushroom-map/config": "workspace:*",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.8.3"
+  }
+}
