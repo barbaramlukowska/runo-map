@@ -83,6 +83,130 @@ describe("POST /api/sightings", () => {
   });
 });
 
+describe("GET /api/sightings/:id", () => {
+  it("responds 200 with the sighting for a known id", async () => {
+    const res = await request(createApp()).get("/api/sightings/seed-1");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ id: "seed-1", species: "BOROWIK" });
+  });
+
+  it("responds 404 for an unknown id", async () => {
+    const res = await request(createApp()).get("/api/sightings/no-such-id");
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: "Not found" });
+  });
+});
+
+describe("GET /api/sightings filters", () => {
+  it("filters by species", async () => {
+    const res = await request(createApp()).get("/api/sightings?species=KURKA");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].species).toBe("KURKA");
+  });
+
+  it("filters by foundAt date range", async () => {
+    // seed-1 found 2026-07-05, seed-2 found 2026-07-08
+    const res = await request(createApp()).get(
+      "/api/sightings?from=2026-07-07T00:00:00.000Z&to=2026-07-09T00:00:00.000Z",
+    );
+
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].id).toBe("seed-2");
+  });
+
+  it("responds 400 for an unknown species filter", async () => {
+    const res = await request(createApp()).get("/api/sightings?species=SMERF");
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid input");
+  });
+});
+
+describe("rate limiting", () => {
+  it("responds 429 after 10 sightings from one IP within the window", async () => {
+    const app = createApp();
+
+    for (let i = 0; i < 10; i++) {
+      const ok = await request(app).post("/api/sightings").send({
+        species: "KANIA",
+        lat: 51.1,
+        lng: 17.03,
+        foundAt: "2026-07-09T00:00:00.000Z",
+      });
+      expect(ok.status).toBe(201);
+    }
+
+    const blocked = await request(app).post("/api/sightings").send({
+      species: "KANIA",
+      lat: 51.1,
+      lng: 17.03,
+      foundAt: "2026-07-09T00:00:00.000Z",
+    });
+
+    expect(blocked.status).toBe(429);
+  });
+
+  it("does not rate-limit reads", async () => {
+    const app = createApp();
+
+    for (let i = 0; i < 15; i++) {
+      const res = await request(app).get("/api/sightings");
+      expect(res.status).toBe(200);
+    }
+  });
+});
+
+describe("error handling", () => {
+  it("responds 500 with a generic message when a route throws", async () => {
+    const brokenStore = {
+      list() {
+        throw new Error("db exploded: secret connection string leaked");
+      },
+      add() {
+        throw new Error("db exploded");
+      },
+      getById() {
+        throw new Error("db exploded");
+      },
+    };
+    const app = createApp(brokenStore);
+
+    const res = await request(app).get("/api/sightings");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "Internal server error" });
+    // the real error message must never reach the client
+    expect(JSON.stringify(res.body)).not.toContain("secret");
+  });
+
+  it("responds 404 as JSON for unknown routes", async () => {
+    const app = createApp();
+
+    const res = await request(app).get("/api/nonsense");
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual({ error: "Not found" });
+  });
+});
+
+describe("security headers", () => {
+  it("does not reveal Express via X-Powered-By", async () => {
+    const res = await request(createApp()).get("/api/health");
+
+    expect(res.headers["x-powered-by"]).toBeUndefined();
+  });
+
+  it("sets basic security headers via helmet", async () => {
+    const res = await request(createApp()).get("/api/health");
+
+    expect(res.headers["x-content-type-options"]).toBe("nosniff");
+  });
+});
+
 describe("GET /api/health", () => {
   it("responds 200 with status ok", async () => {
     const app = createApp();

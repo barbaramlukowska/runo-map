@@ -12,6 +12,15 @@ export const sightingInputSchema = z.object({
 
 export type SightingInput = z.infer<typeof sightingInputSchema>;
 
+// Query params for listing sightings (map filters) — all optional.
+export const sightingFilterSchema = z.object({
+  species: z.enum(SPECIES).optional(),
+  from: z.iso.datetime().optional(),
+  to: z.iso.datetime().optional(),
+});
+
+export type SightingFilter = z.infer<typeof sightingFilterSchema>;
+
 // Dates travel as ISO strings (JSON has no Date type); Prisma introduces Date objects in stage 2.
 export interface Sighting {
   id: string;
