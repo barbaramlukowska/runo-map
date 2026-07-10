@@ -50,6 +50,17 @@ describe("POST /api/sightings", () => {
     expect(res.body.map((s: { species: string }) => s.species)).toContain("RYDZ");
   });
 
+  it("rounds coordinates to ~500 m before saving (location privacy)", async () => {
+    const app = createApp();
+
+    const res = await request(app)
+      .post("/api/sightings")
+      .send({ ...validInput, lat: 53.4271, lng: 14.5538 });
+
+    expect(res.body.lat).toBe(53.425);
+    expect(res.body.lng).toBe(14.555);
+  });
+
   it("responds 400 with issues for an unknown species", async () => {
     const app = createApp();
 
