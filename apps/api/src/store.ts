@@ -1,13 +1,20 @@
 import { randomUUID } from "node:crypto";
 import type { Sighting, SightingFilter, SightingInput } from "@mushroom-map/shared";
 
-// In-memory store for stage 1 — replaced by Prisma + PostgreSQL in stage 2.
+// Async because production data lives behind the network (Prisma + PostgreSQL).
+export interface Store {
+  list(filter?: SightingFilter): Promise<Sighting[]>;
+  getById(id: string): Promise<Sighting | undefined>;
+  add(input: SightingInput): Promise<Sighting>;
+}
+
+// In-memory implementation — used by tests; production uses createPrismaStore.
 // Factory (like createApp) so each test gets an isolated instance.
-export function createStore(seed: Sighting[] = []) {
+export function createStore(seed: Sighting[] = []): Store {
   const sightings: Sighting[] = [...seed];
 
   return {
-    list(filter: SightingFilter = {}): Sighting[] {
+    async list(filter: SightingFilter = {}): Promise<Sighting[]> {
       return sightings.filter(
         (s) =>
           (!filter.species || s.species === filter.species) &&
@@ -15,10 +22,10 @@ export function createStore(seed: Sighting[] = []) {
           (!filter.to || s.foundAt <= filter.to),
       );
     },
-    getById(id: string): Sighting | undefined {
+    async getById(id: string): Promise<Sighting | undefined> {
       return sightings.find((s) => s.id === id);
     },
-    add(input: SightingInput): Sighting {
+    async add(input: SightingInput): Promise<Sighting> {
       const sighting: Sighting = {
         id: randomUUID(),
         ...input,
@@ -29,5 +36,3 @@ export function createStore(seed: Sighting[] = []) {
     },
   };
 }
-
-export type Store = ReturnType<typeof createStore>;

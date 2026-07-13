@@ -13,17 +13,17 @@ export function createApp(store: Store = createStore(demoSeed)): Express {
   app.use(helmet());
   app.use(express.json());
 
-  app.get("/api/sightings", (req, res) => {
+  app.get("/api/sightings", async (req, res) => {
     const parsed = sightingFilterSchema.safeParse(req.query);
     if (!parsed.success) {
       res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
       return;
     }
-    res.json(store.list(parsed.data));
+    res.json(await store.list(parsed.data));
   });
 
-  app.get("/api/sightings/:id", (req, res) => {
-    const sighting = store.getById(req.params.id);
+  app.get("/api/sightings/:id", async (req, res) => {
+    const sighting = await store.getById(req.params.id);
     if (!sighting) {
       res.status(404).json({ error: "Not found" });
       return;
@@ -40,13 +40,13 @@ export function createApp(store: Store = createStore(demoSeed)): Express {
     message: { error: "Too many sightings, try again later" },
   });
 
-  app.post("/api/sightings", postLimiter, (req, res) => {
+  app.post("/api/sightings", postLimiter, async (req, res) => {
     const parsed = sightingInputSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "Invalid input", issues: parsed.error.issues });
       return;
     }
-    const sighting = store.add({
+    const sighting = await store.add({
       ...parsed.data,
       lat: roundCoord(parsed.data.lat),
       lng: roundCoord(parsed.data.lng),
