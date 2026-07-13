@@ -1,6 +1,6 @@
 # MushroomMap 🍄
 
-> Work in progress — **Stage 3 (map UI) in progress**: Next.js app scaffolded, react-leaflet map up next. This README grows with the project.
+> Work in progress — **Stage 3 (map UI) in progress**: full-screen map with clustered, age-faded pins backed by the real API; sighting form up next. This README grows with the project.
 
 A community map of mushroom sightings in Poland. Users anonymously report finds (species, date, approximate location) and browse what others have found nearby — a *give-to-get* model for mushroom pickers.
 
@@ -13,7 +13,7 @@ UI text is in Polish (the app targets mushroom pickers in Poland); code, docs an
 | Area | Choice |
 |---|---|
 | Monorepo | Turborepo + pnpm workspaces |
-| Frontend | Next.js (App Router) + react-leaflet *(map in progress)* |
+| Frontend | Next.js (App Router) + react-leaflet |
 | Backend | Express 5 + Prisma 7 |
 | Database | PostgreSQL on Supabase |
 | Shared validation | Zod schemas in `packages/shared` |
@@ -84,10 +84,12 @@ curl localhost:3001/api/sightings
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/sightings` | list sightings; optional `species`, `from`, `to` filters |
+| GET | `/api/sightings` | list sightings; optional `species`, `from`, `to`, `bbox` filters |
 | GET | `/api/sightings/:id` | single sighting |
 | POST | `/api/sightings` | report a sighting (Zod-validated, rate-limited 10/h/IP) |
 | GET | `/api/health` | healthcheck |
+
+`bbox` takes `minLng,minLat,maxLng,maxLat` — the format Leaflet's `map.getBounds().toBBoxString()` produces, so the map can request only the visible area.
 
 Routes depend on a `Store` interface injected into the app factory: production wires in the
 Prisma-backed store (PostgreSQL on Supabase), tests use an isolated in-memory implementation.

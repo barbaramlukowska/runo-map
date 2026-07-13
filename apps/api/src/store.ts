@@ -8,6 +8,9 @@ export interface Store {
   add(input: SightingInput): Promise<Sighting>;
 }
 
+const inBbox = (s: Sighting, [minLng, minLat, maxLng, maxLat]: [number, number, number, number]) =>
+  s.lng >= minLng && s.lng <= maxLng && s.lat >= minLat && s.lat <= maxLat;
+
 // In-memory implementation — used by tests; production uses createPrismaStore.
 // Factory (like createApp) so each test gets an isolated instance.
 export function createStore(seed: Sighting[] = []): Store {
@@ -19,7 +22,8 @@ export function createStore(seed: Sighting[] = []): Store {
         (s) =>
           (!filter.species || s.species === filter.species) &&
           (!filter.from || s.foundAt >= filter.from) &&
-          (!filter.to || s.foundAt <= filter.to),
+          (!filter.to || s.foundAt <= filter.to) &&
+          (!filter.bbox || inBbox(s, filter.bbox)),
       );
     },
     async getById(id: string): Promise<Sighting | undefined> {

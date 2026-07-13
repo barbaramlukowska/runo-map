@@ -19,10 +19,14 @@ function toSighting(row: SightingRow): Sighting {
 export function createPrismaStore(prisma: PrismaClient): Store {
   return {
     async list(filter = {}) {
+      // Destructuring [] yields undefined bounds, which Prisma ignores in `where`.
+      const [minLng, minLat, maxLng, maxLat] = filter.bbox ?? [];
       const rows = await prisma.sighting.findMany({
         where: {
           species: filter.species,
           foundAt: { gte: filter.from, lte: filter.to },
+          lat: { gte: minLat, lte: maxLat },
+          lng: { gte: minLng, lte: maxLng },
         },
       });
       return rows.map(toSighting);

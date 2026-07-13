@@ -124,6 +124,28 @@ describe("GET /api/sightings filters", () => {
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Invalid input");
   });
+
+  it("filters by bbox (only sightings inside the visible map area)", async () => {
+    // seed-1 at lng 21.24 / lat 52.13; seed-2 at lng 20.79 / lat 52.35
+    const res = await request(createApp()).get("/api/sightings?bbox=21,52,21.5,52.2");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(1);
+    expect(res.body[0].id).toBe("seed-1");
+  });
+
+  it("responds 400 for a malformed bbox", async () => {
+    const res = await request(createApp()).get("/api/sightings?bbox=not-a-bbox");
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid input");
+  });
+
+  it("responds 400 when bbox min exceeds max", async () => {
+    const res = await request(createApp()).get("/api/sightings?bbox=21.5,52,21,52.2");
+
+    expect(res.status).toBe(400);
+  });
 });
 
 describe("rate limiting", () => {

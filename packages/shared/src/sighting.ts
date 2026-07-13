@@ -12,11 +12,21 @@ export const sightingInputSchema = z.object({
 
 export type SightingInput = z.infer<typeof sightingInputSchema>;
 
+// "minLng,minLat,maxLng,maxLat" — the order Leaflet's map.getBounds().toBBoxString() emits.
+const bboxSchema = z
+  .string()
+  .regex(/^-?\d+(\.\d+)?(,-?\d+(\.\d+)?){3}$/, "Expected bbox as minLng,minLat,maxLng,maxLat")
+  .transform((value) => value.split(",").map(Number) as [number, number, number, number])
+  .refine(([minLng, minLat, maxLng, maxLat]) => minLng < maxLng && minLat < maxLat, {
+    error: "bbox min must be less than max",
+  });
+
 // Query params for listing sightings (map filters) — all optional.
 export const sightingFilterSchema = z.object({
   species: z.enum(SPECIES).optional(),
   from: z.iso.datetime().optional(),
   to: z.iso.datetime().optional(),
+  bbox: bboxSchema.optional(),
 });
 
 export type SightingFilter = z.infer<typeof sightingFilterSchema>;
