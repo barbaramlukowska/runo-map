@@ -239,3 +239,31 @@ describe("GET /api/health", () => {
     expect(res.body).toEqual({ status: "ok" });
   });
 });
+
+describe("CORS", () => {
+  it("allows the configured web origin", async () => {
+    const res = await request(createApp())
+      .get("/api/sightings")
+      .set("Origin", "http://localhost:3000");
+
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
+  });
+
+  it("does not allow a foreign origin", async () => {
+    const res = await request(createApp())
+      .get("/api/sightings")
+      .set("Origin", "http://evil.example.com");
+
+    expect(res.headers["access-control-allow-origin"]).toBeUndefined();
+  });
+
+  it("answers the CORS preflight (OPTIONS) for POST", async () => {
+    const res = await request(createApp())
+      .options("/api/sightings")
+      .set("Origin", "http://localhost:3000")
+      .set("Access-Control-Request-Method", "POST");
+
+    expect(res.status).toBe(204);
+    expect(res.headers["access-control-allow-origin"]).toBe("http://localhost:3000");
+  });
+});

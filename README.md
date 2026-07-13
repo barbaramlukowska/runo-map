@@ -60,6 +60,7 @@ DATABASE_URL="postgresql://...@...pooler.supabase.com:6543/postgres?pgbouncer=tr
 # session pooler (port 5432) — used by prisma migrate
 DIRECT_URL="postgresql://...@...pooler.supabase.com:5432/postgres"
 # PORT=3002   # optional, default 3001
+# WEB_ORIGIN=http://localhost:3000   # browser origin allowed by CORS (default localhost:3000)
 ```
 
 Both URLs are on the Supabase dashboard under **Connect → ORMs → Prisma**.
@@ -79,6 +80,8 @@ pnpm --filter @mushroom-map/api dev   # API on http://localhost:3001
 pnpm --filter @mushroom-map/web dev   # frontend on http://localhost:3000
 curl localhost:3001/api/sightings
 ```
+
+The web app also needs `NEXT_PUBLIC_API_URL` (browser-side POST target) in `apps/web/.env.local`; see `apps/web/.env.example`.
 
 ## API
 
@@ -113,6 +116,7 @@ Security is designed in from the start, mapped against **OWASP Top 10:2025** (we
 - Central error handler: real errors logged server-side, clients only ever see a generic 500 — no stack traces or internals leak (A10)
 - `helmet` security headers, `X-Powered-By` removed (A02)
 - Rate limiting: 10 new sightings per IP per hour (A06, anti-vandalism)
+- CORS restricts browser calls to the `WEB_ORIGIN` origin; requests from other sites are refused (A05)
 - Secrets only in env vars; `.env` gitignored from the first commit (A02)
 - DB reachable only through the API: Supabase Row Level Security enabled with no policies,
   so the auto-generated public REST API is deny-by-default (A01)
@@ -121,4 +125,4 @@ Security is designed in from the start, mapped against **OWASP Top 10:2025** (we
 - SQL injection surface removed by Prisma's parameterized queries (A05)
 - pnpm blocks package postinstall scripts; trusted packages allowlisted explicitly (A03)
 
-Planned: strict CORS at deploy, structured logging with `pino` (A09), supply-chain checks in CI (A03).
+Planned: structured logging with `pino` (A09), supply-chain checks in CI (A03).
