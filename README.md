@@ -1,17 +1,19 @@
 # MushroomMap 🍄
 
-> Work in progress — Stage 2 (PostgreSQL + Prisma) complete, next up: **Stage 3 — map UI**. This README grows with the project.
+> Work in progress — **Stage 3 (map UI) in progress**: Next.js app scaffolded, react-leaflet map up next. This README grows with the project.
 
 A community map of mushroom sightings in Poland. Users anonymously report finds (species, date, approximate location) and browse what others have found nearby — a *give-to-get* model for mushroom pickers.
 
 Portfolio project focused on learning **Node.js (Express)** and **monorepo architecture (Turborepo)**.
+
+UI text is in Polish (the app targets mushroom pickers in Poland); code, docs and commits are in English.
 
 ## Tech stack
 
 | Area | Choice |
 |---|---|
 | Monorepo | Turborepo + pnpm workspaces |
-| Frontend | Next.js + react-leaflet *(planned)* |
+| Frontend | Next.js (App Router) + react-leaflet *(map in progress)* |
 | Backend | Express 5 + Prisma 7 |
 | Database | PostgreSQL on Supabase |
 | Shared validation | Zod schemas in `packages/shared` |
@@ -25,7 +27,7 @@ mushroom-map/
 ├── turbo.json              # Turborepo task pipeline
 ├── pnpm-workspace.yaml
 ├── apps/
-│   ├── web/                # Next.js frontend (placeholder for now)
+│   ├── web/                # Next.js frontend (App Router)
 │   └── api/                # Express API + Prisma (PostgreSQL on Supabase)
 └── packages/
     ├── shared/             # shared TS types + Zod schemas
@@ -74,6 +76,7 @@ npx prisma db seed       # demo data; idempotent, safe to rerun
 
 ```bash
 pnpm --filter @mushroom-map/api dev   # API on http://localhost:3001
+pnpm --filter @mushroom-map/web dev   # frontend on http://localhost:3000
 curl localhost:3001/api/sightings
 ```
 
@@ -95,7 +98,7 @@ The swap in Stage 2 didn't change a single route.
 - [x] **Stage 0** — Turborepo + pnpm scaffold, shared package wired into both apps
 - [x] **Stage 1** — Express API with in-memory data, tests from day one
 - [x] **Stage 2** — PostgreSQL (Supabase) + Prisma migrations, seed, store swap
-- [ ] **Stage 3** — Map UI: react-leaflet, clustering, filters, freshness fading
+- [ ] **Stage 3** *(in progress)* — Map UI: react-leaflet, clustering, filters, freshness fading
 - [ ] **Stage 3.5** — Deploy (Vercel + Render) and CI (GitHub Actions)
 - [ ] **Stage 4** — AI assistant with tool calling (sightings + weather)
 
