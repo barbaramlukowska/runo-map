@@ -1,3 +1,9 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# trusted packages allowed to run postinstall scripts
+onlyBuiltDependencies:
+  - "@prisma/engines"
+  - prisma
+  - esbuild

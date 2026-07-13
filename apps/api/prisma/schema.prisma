@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Must stay in sync with SPECIES in packages/shared.
+enum Species {
+  BOROWIK
+  PODGRZYBEK
+  KURKA
+  MASLAK
+  KOZLARZ
+  RYDZ
+  OPIENKA
+  KANIA
+}
+
+model Sighting {
+  id        String   @id @default(cuid())
+  species   Species
+  lat       Float // rounded to ~500 m before insert (privacy)
+  lng       Float
+  foundAt   DateTime
+  comment   String?  @db.VarChar(280)
+  createdAt DateTime @default(now())
+  userId    String? // always null in MVP; future auth hook
+}
