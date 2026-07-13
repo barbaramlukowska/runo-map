@@ -1,28 +1,43 @@
-import { SPECIES } from "@mushroom-map/shared";
+import { MapView } from "@/components/map-view";
+import type { Sighting } from "@mushroom-map/shared";
 
-export default function HomePage() {
+const API_URL = process.env.API_URL ?? "http://localhost:3001";
+
+// null = API unreachable; [] = API up with no sightings.
+async function fetchSightings(): Promise<Sighting[] | null> {
+  try {
+    const response = await fetch(`${API_URL}/api/sightings`, { cache: "no-store" });
+    if (!response.ok) return null;
+    return (await response.json()) as Sighting[];
+  } catch {
+    return null;
+  }
+}
+
+export default async function HomePage() {
+  const sightings = await fetchSightings();
+
   return (
-    <main style={{ maxWidth: 640, margin: "0 auto", padding: "4rem 1.5rem" }}>
-      <h1 style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>MushroomMap</h1>
-      <p style={{ marginBottom: "2rem", color: "#2d5a3d" }}>
-        Społecznościowa mapa grzybów w Polsce. Mapa pojawi się w kolejnym kroku
-        — poniżej lista gatunków wczytana z pakietu shared.
-      </p>
-      <ul style={{ listStyle: "none", display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-        {SPECIES.map((species) => (
-          <li
-            key={species}
-            style={{
-              padding: "0.25rem 0.75rem",
-              borderRadius: 999,
-              background: "rgba(160, 196, 157, 0.3)",
-              fontSize: "0.875rem",
-            }}
-          >
-            {species}
-          </li>
-        ))}
-      </ul>
+    <main>
+      {sightings === null && (
+        <div
+          style={{
+            position: "fixed",
+            top: 16,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 1000,
+            background: "#fdfbf7",
+            border: "1px solid #d8d4cb",
+            borderRadius: 8,
+            padding: "0.5rem 1rem",
+            fontSize: "0.875rem",
+          }}
+        >
+          Nie udało się pobrać zgłoszeń — sprawdź, czy API działa.
+        </div>
+      )}
+      <MapView sightings={sightings ?? []} />
     </main>
   );
 }

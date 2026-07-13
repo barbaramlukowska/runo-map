@@ -7,19 +7,24 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@mushroom-map/shared": "workspace:*",
+    "leaflet": "^1.9.4",
     "next": "^15.3.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0"
   },
   "devDependencies": {
     "@mushroom-map/config": "workspace:*",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^24.0.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.10"
   }
 }
