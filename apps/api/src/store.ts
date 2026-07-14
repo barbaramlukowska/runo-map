@@ -20,7 +20,7 @@ export function createStore(seed: Sighting[] = []): Store {
     async list(filter: SightingFilter = {}): Promise<Sighting[]> {
       return sightings.filter(
         (s) =>
-          (!filter.species || s.species === filter.species) &&
+          (!filter.species || filter.species.includes(s.species)) &&
           (!filter.from || s.foundAt >= filter.from) &&
           (!filter.to || s.foundAt <= filter.to) &&
           (!filter.bbox || inBbox(s, filter.bbox)),

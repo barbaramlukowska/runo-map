@@ -108,6 +108,21 @@ describe("GET /api/sightings filters", () => {
     expect(res.body[0].species).toBe("KURKA");
   });
 
+  it("filters by multiple species (repeated query key)", async () => {
+    const res = await request(createApp()).get("/api/sightings?species=KURKA&species=BOROWIK");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveLength(2);
+    expect(res.body.map((s: { species: string }) => s.species).sort()).toEqual(["BOROWIK", "KURKA"]);
+  });
+
+  it("responds 400 when one of multiple species is unknown", async () => {
+    const res = await request(createApp()).get("/api/sightings?species=KURKA&species=SMERF");
+
+    expect(res.status).toBe(400);
+    expect(res.body.error).toBe("Invalid input");
+  });
+
   it("filters by foundAt date range", async () => {
     // seed-1 found 2026-07-05, seed-2 found 2026-07-08
     const res = await request(createApp()).get(

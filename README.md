@@ -87,7 +87,7 @@ The web app also needs `NEXT_PUBLIC_API_URL` (browser-side POST target) in `apps
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/sightings` | list sightings; optional `species`, `from`, `to`, `bbox` filters |
+| GET | `/api/sightings` | list sightings; optional `species` (repeatable: `?species=KURKA&species=BOROWIK`), `from`, `to`, `bbox` filters |
 | GET | `/api/sightings/:id` | single sighting |
 | POST | `/api/sightings` | report a sighting (Zod-validated, rate-limited 10/h/IP) |
 | GET | `/api/health` | healthcheck |
