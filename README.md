@@ -1,4 +1,6 @@
-# MushroomMap 🍄
+# Runo Map 🍄
+
+*Runo — Polish for the forest floor harvest: mushrooms, berries, and everything you forage.*
 
 > Work in progress — **Stage 3 (map UI) in progress**: full-screen map with clustered, age-faded pins backed by the real API; sighting form up next. This README grows with the project.
 
@@ -23,7 +25,7 @@ UI text is in Polish (the app targets mushroom pickers in Poland); code, docs an
 ## Repository structure
 
 ```
-mushroom-map/
+runo-map/
 ├── turbo.json              # Turborepo task pipeline
 ├── pnpm-workspace.yaml
 ├── apps/
@@ -76,8 +78,8 @@ npx prisma db seed       # demo data; idempotent, safe to rerun
 ### 3. Run
 
 ```bash
-pnpm --filter @mushroom-map/api dev   # API on http://localhost:3001
-pnpm --filter @mushroom-map/web dev   # frontend on http://localhost:3000
+pnpm --filter @runo-map/api dev   # API on http://localhost:3001
+pnpm --filter @runo-map/web dev   # frontend on http://localhost:3000
 curl localhost:3001/api/sightings
 ```
 

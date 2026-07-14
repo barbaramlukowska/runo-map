@@ -14,15 +14,15 @@ importers:
 
   apps/api:
     dependencies:
-      '@mushroom-map/shared':
-        specifier: workspace:*
-        version: link:../../packages/shared
       '@prisma/adapter-pg':
         specifier: ^7.8.0
         version: 7.8.0
       '@prisma/client':
         specifier: ^7.8.0
         version: 7.8.0(prisma@7.8.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(typescript@5.9.3))(typescript@5.9.3)
+      '@runo-map/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       cors:
         specifier: ^2.8.6
         version: 2.8.6
@@ -39,7 +39,7 @@ importers:
         specifier: ^8.2.0
         version: 8.2.0
     devDependencies:
-      '@mushroom-map/config':
+      '@runo-map/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/cors':
@@ -72,7 +72,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@mushroom-map/shared':
+      '@runo-map/shared':
         specifier: workspace:*
         version: link:../../packages/shared
       leaflet:
@@ -100,7 +100,7 @@ importers:
         specifier: 5.0.0-rc.0
         version: 5.0.0-rc.0(leaflet.markercluster@1.5.3(leaflet@1.9.4))(leaflet@1.9.4)(react-dom@19.2.7(react@19.2.7))(react-leaflet@5.0.0(leaflet@1.9.4)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
     devDependencies:
-      '@mushroom-map/config':
+      '@runo-map/config':
         specifier: workspace:*
         version: link:../../packages/config
       '@types/leaflet':
@@ -133,7 +133,7 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
-      '@mushroom-map/config':
+      '@runo-map/config':
         specifier: workspace:*
         version: link:../config
       typescript:

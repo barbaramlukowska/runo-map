@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import type { Sighting } from "@mushroom-map/shared";
+import type { Sighting } from "@runo-map/shared";
 import { ReportForm } from "./report-form";
 
 // Leaflet touches `window` on import, so the map must never render on the server.

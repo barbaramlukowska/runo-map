@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sightingInputSchema } from "@mushroom-map/shared";
+import { sightingInputSchema } from "@runo-map/shared";
 import { toSightingInput } from "./report-input";
 
 const location = { lat: 52.23, lng: 21.01 };
