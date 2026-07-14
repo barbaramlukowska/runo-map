@@ -1,11 +1,21 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+@import "tailwindcss";
+
+/* Design tokens from docs/design/mockup-mvp.html (Tailwind v4 CSS-first theme). */
+@theme {
+  --color-forest-deep: #1a3c2a;
+  --color-forest-mid: #2d5a3d;
+  --color-forest-soft: #5a8a5c;
+  --color-forest-pale: #a0c49d;
+  --color-cream: #fdfbf7;
+  --color-amber: #d97706;
+  --color-muted: #d8d4ce;
+  --color-bark: #5c4033;
+
+  /* Font variables are set on <html> by next/font in layout.tsx. */
+  --font-sans: var(--font-work-sans), system-ui, sans-serif;
+  --font-serif: var(--font-instrument-serif), Georgia, serif;
 }
 
 body {
-  font-family: system-ui, sans-serif;
-  background: #fdfbf7;
-  color: #1a3c2a;
+  @apply bg-cream font-sans text-forest-deep;
 }
