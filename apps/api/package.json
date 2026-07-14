@@ -12,6 +12,7 @@
     "@mushroom-map/shared": "workspace:*",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "@mushroom-map/config": "workspace:*",
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.0.0",
     "@types/supertest": "^7.2.0",

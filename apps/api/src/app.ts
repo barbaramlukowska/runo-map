@@ -1,4 +1,5 @@
 import express, { type Express, type NextFunction, type Request, type Response } from "express";
+import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { sightingFilterSchema, sightingInputSchema } from "@mushroom-map/shared";
@@ -11,6 +12,10 @@ export function createApp(store: Store = createStore(demoSeed)): Express {
   const app = express();
 
   app.use(helmet());
+  // Browser POSTs come straight from the web app; reflect only its origin.
+  // origin as an array (not a plain string) makes cors omit the header for
+  // any other/absent origin instead of echoing a fixed value.
+  app.use(cors({ origin: [process.env.WEB_ORIGIN ?? "http://localhost:3000"] }));
   app.use(express.json());
 
   app.get("/api/sightings", async (req, res) => {

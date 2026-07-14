@@ -1,7 +1,7 @@
 "use client";
 
 import { divIcon, type MarkerCluster } from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer, ZoomControl } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import { SPECIES_LABELS, type Sighting } from "@mushroom-map/shared";
 import { pinAgeCategory, type PinAge } from "@/lib/pin-age";
@@ -53,11 +53,22 @@ function formatFoundAgo(foundAt: string, now: Date): string {
   return `${days} dni temu`;
 }
 
-interface SightingsMapProps {
-  sightings: Sighting[];
+// Bridges Leaflet map clicks to React state in the parent.
+function MapClickHandler({ onMapClick }: { onMapClick: (location: { lat: number; lng: number }) => void }) {
+  useMapEvents({
+    click(e) {
+      onMapClick({ lat: e.latlng.lat, lng: e.latlng.lng });
+    },
+  });
+  return null;
 }
 
-export function SightingsMap({ sightings }: SightingsMapProps) {
+interface SightingsMapProps {
+  sightings: Sighting[];
+  onMapClick?: (location: { lat: number; lng: number }) => void;
+}
+
+export function SightingsMap({ sightings, onMapClick }: SightingsMapProps) {
   const now = new Date();
 
   return (
@@ -73,6 +84,7 @@ export function SightingsMap({ sightings }: SightingsMapProps) {
         attribution='&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
       <ZoomControl position="bottomright" />
+      {onMapClick && <MapClickHandler onMapClick={onMapClick} />}
       <MarkerClusterGroup
         iconCreateFunction={clusterIcon}
         maxClusterRadius={60}

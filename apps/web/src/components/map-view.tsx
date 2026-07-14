@@ -1,7 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import type { Sighting } from "@mushroom-map/shared";
+import { ReportForm } from "./report-form";
 
 // Leaflet touches `window` on import, so the map must never render on the server.
 const SightingsMap = dynamic(
@@ -29,5 +31,14 @@ interface MapViewProps {
 }
 
 export function MapView({ sightings }: MapViewProps) {
-  return <SightingsMap sightings={sightings} />;
+  const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  return (
+    <>
+      <SightingsMap sightings={sightings} onMapClick={setPendingLocation} />
+      {pendingLocation && (
+        <ReportForm location={pendingLocation} onClose={() => setPendingLocation(null)} />
+      )}
+    </>
+  );
 }
