@@ -23,7 +23,12 @@ const bboxSchema = z
 
 // Query params for listing sightings (map filters) — all optional.
 export const sightingFilterSchema = z.object({
-  species: z.enum(SPECIES).optional(),
+  // Express 5's query parser yields a string for ?species=A and an array
+  // for ?species=A&species=B — accept both, normalize to an array.
+  species: z
+    .union([z.enum(SPECIES), z.array(z.enum(SPECIES))])
+    .transform((value) => (Array.isArray(value) ? value : [value]))
+    .optional(),
   from: z.iso.datetime().optional(),
   to: z.iso.datetime().optional(),
   bbox: bboxSchema.optional(),

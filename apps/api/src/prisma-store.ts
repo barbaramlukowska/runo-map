@@ -1,4 +1,4 @@
-import type { Sighting } from "@mushroom-map/shared";
+import type { Sighting, SightingFilter } from "@mushroom-map/shared";
 import type { PrismaClient, Sighting as SightingRow } from "./generated/prisma/client.js";
 import type { Store } from "./store.js";
 
@@ -18,12 +18,12 @@ function toSighting(row: SightingRow): Sighting {
 
 export function createPrismaStore(prisma: PrismaClient): Store {
   return {
-    async list(filter = {}) {
+    async list(filter: SightingFilter = {}) {
       // Destructuring [] yields undefined bounds, which Prisma ignores in `where`.
       const [minLng, minLat, maxLng, maxLat] = filter.bbox ?? [];
       const rows = await prisma.sighting.findMany({
         where: {
-          species: filter.species,
+          species: filter.species ? { in: filter.species } : undefined,
           foundAt: { gte: filter.from, lte: filter.to },
           lat: { gte: minLat, lte: maxLat },
           lng: { gte: minLng, lte: maxLng },
