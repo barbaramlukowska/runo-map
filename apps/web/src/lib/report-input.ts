@@ -1,4 +1,4 @@
-import type { Species, SightingInput } from "@mushroom-map/shared";
+import type { Species, SightingInput } from "@runo-map/shared";
 
 // Raw values the report form collects, before shaping into the API body.
 export interface ReportFormValues {

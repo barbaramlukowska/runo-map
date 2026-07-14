@@ -1,5 +1,5 @@
 {
-  "name": "@mushroom-map/shared",
+  "name": "@runo-map/shared",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@mushroom-map/config": "workspace:*",
+    "@runo-map/config": "workspace:*",
     "typescript": "^5.8.3"
   },
   "dependencies": {

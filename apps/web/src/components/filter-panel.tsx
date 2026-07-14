@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { SPECIES, SPECIES_LABELS, type Species } from "@mushroom-map/shared";
+import { SPECIES, SPECIES_LABELS, type Species } from "@runo-map/shared";
 import {
   DAY_PRESETS,
   buildPageQuery,

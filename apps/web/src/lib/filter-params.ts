@@ -1,4 +1,4 @@
-import { SPECIES, type Species } from "@mushroom-map/shared";
+import { SPECIES, type Species } from "@runo-map/shared";
 
 export type DayPreset = 3 | 7 | 14 | "all";
 export const DAY_PRESETS: readonly DayPreset[] = [3, 7, 14, "all"];

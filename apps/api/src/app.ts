@@ -2,7 +2,7 @@ import express, { type Express, type NextFunction, type Request, type Response }
 import cors from "cors";
 import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
-import { sightingFilterSchema, sightingInputSchema } from "@mushroom-map/shared";
+import { sightingFilterSchema, sightingInputSchema } from "@runo-map/shared";
 import { roundCoord } from "./geo.js";
 import { demoSeed } from "./seed.js";
 import { createStore, type Store } from "./store.js";

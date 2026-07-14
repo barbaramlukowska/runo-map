@@ -1,4 +1,4 @@
-import type { Sighting, SightingFilter } from "@mushroom-map/shared";
+import type { Sighting, SightingFilter } from "@runo-map/shared";
 import type { PrismaClient, Sighting as SightingRow } from "./generated/prisma/client.js";
 import type { Store } from "./store.js";
 

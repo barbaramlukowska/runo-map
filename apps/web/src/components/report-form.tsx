@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { SPECIES, SPECIES_LABELS, sightingInputSchema } from "@mushroom-map/shared";
+import { SPECIES, SPECIES_LABELS, sightingInputSchema } from "@runo-map/shared";
 import { toSightingInput, type ReportFormValues } from "@/lib/report-input";
 
 interface ReportFormProps {

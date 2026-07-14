@@ -1,5 +1,5 @@
 {
-  "extends": "@mushroom-map/config/tsconfig.base.json",
+  "extends": "@runo-map/config/tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
     "declaration": false,

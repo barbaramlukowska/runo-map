@@ -1,4 +1,4 @@
-import type { Sighting } from "@mushroom-map/shared";
+import type { Sighting } from "@runo-map/shared";
 
 // Demo data for local development — real data comes from the DB in stage 2.
 export const demoSeed: Sighting[] = [

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { Sighting, SightingFilter, SightingInput } from "@mushroom-map/shared";
+import type { Sighting, SightingFilter, SightingInput } from "@runo-map/shared";
 
 // Async because production data lives behind the network (Prisma + PostgreSQL).
 export interface Store {

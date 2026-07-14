@@ -1,5 +1,5 @@
 {
-  "name": "@mushroom-map/config",
+  "name": "@runo-map/config",
   "version": "0.0.0",
   "private": true,
   "files": ["tsconfig.base.json"]

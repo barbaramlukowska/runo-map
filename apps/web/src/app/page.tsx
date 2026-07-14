@@ -1,7 +1,7 @@
 import { MapView } from "@/components/map-view";
 import { FilterPanel } from "@/components/filter-panel";
 import { buildApiQuery, parseDaysParam, parseSpeciesParam } from "@/lib/filter-params";
-import type { Sighting } from "@mushroom-map/shared";
+import type { Sighting } from "@runo-map/shared";
 
 const API_URL = process.env.API_URL ?? "http://localhost:3001";
 

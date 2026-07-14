@@ -3,7 +3,7 @@
 import { divIcon, type MarkerCluster } from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
-import { SPECIES_LABELS, type Sighting } from "@mushroom-map/shared";
+import { SPECIES_LABELS, type Sighting } from "@runo-map/shared";
 import { pinAgeCategory, type PinAge } from "@/lib/pin-age";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/styles";

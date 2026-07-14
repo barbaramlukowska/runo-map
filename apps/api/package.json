@@ -1,5 +1,5 @@
 {
-  "name": "@mushroom-map/api",
+  "name": "@runo-map/api",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mushroom-map/shared": "workspace:*",
+    "@runo-map/shared": "workspace:*",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "cors": "^2.8.6",
@@ -19,7 +19,7 @@
     "helmet": "^8.2.0"
   },
   "devDependencies": {
-    "@mushroom-map/config": "workspace:*",
+    "@runo-map/config": "workspace:*",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.0.0",

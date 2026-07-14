@@ -1,5 +1,5 @@
 {
-  "name": "@mushroom-map/web",
+  "name": "@runo-map/web",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mushroom-map/shared": "workspace:*",
+    "@runo-map/shared": "workspace:*",
     "leaflet": "^1.9.4",
     "leaflet.markercluster": "^1.5.3",
     "next": "^15.3.4",
@@ -22,7 +22,7 @@
     "react-leaflet-markercluster": "5.0.0-rc.0"
   },
   "devDependencies": {
-    "@mushroom-map/config": "workspace:*",
+    "@runo-map/config": "workspace:*",
     "@types/leaflet": "^1.9.21",
     "@types/leaflet.markercluster": "^1.5.6",
     "@types/node": "^24.0.0",
