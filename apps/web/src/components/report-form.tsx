@@ -38,11 +38,10 @@ function makeResolver(location: { lat: number; lng: number }): Resolver<ReportFo
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
-const LABEL_CLASS =
-  "mb-1 block text-[10px] font-semibold uppercase tracking-wider text-forest-deep/70";
+const LABEL_CLASS = "mb-1 block text-label";
 const INPUT_CLASS =
-  "w-full rounded-lg border border-forest-pale/40 bg-forest-pale/20 px-3 py-2.5 text-[13px] text-forest-deep focus:border-forest-soft focus:outline-none";
-const ERROR_CLASS = "mt-1 text-[11px] text-[#b3261e]";
+  "w-full rounded-lg border border-line/40 bg-line/20 px-3 py-2.5 text-[13px] text-content focus:border-fill focus:outline-none";
+const ERROR_CLASS = "mt-1 text-[11px] text-danger";
 
 export function ReportForm({ location, onClose }: ReportFormProps) {
   const router = useRouter();
@@ -108,20 +107,20 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-forest-deep/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-content/40 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="report-form-title"
-        className="w-full max-w-sm rounded-2xl border border-forest-pale/30 bg-cream/95 p-6 shadow-[0_8px_32px_rgba(26,60,42,0.15)] backdrop-blur-lg"
+        className="w-full max-w-sm rounded-2xl border border-line/30 bg-surface/95 p-6 shadow-panel backdrop-blur-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="report-form-title" className="font-serif text-lg text-forest-deep">
+        <h2 id="report-form-title" className="text-title">
           Zgłoś znalezisko
         </h2>
-        <p className="mb-4 mt-0.5 text-xs text-forest-mid/70">
+        <p className="mb-4 mt-0.5 text-xs text-content-muted">
           Podziel się obserwacją ze społecznością
         </p>
 
@@ -161,7 +160,7 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
               <label htmlFor="comment" className={LABEL_CLASS}>
                 Komentarz (opcjonalnie)
               </label>
-              <span className="text-[10px] text-forest-soft">{commentLength}/280</span>
+              <span className="text-[10px] text-content-muted">{commentLength}/280</span>
             </div>
             <textarea
               id="comment"
@@ -174,7 +173,7 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
             {errors.comment && <p className={ERROR_CLASS}>{errors.comment.message}</p>}
           </div>
 
-          <p className="text-[10px] font-light leading-relaxed text-forest-soft">
+          <p className="text-[10px] font-light leading-relaxed text-content-muted">
             Lokalizacja zostanie zaokrąglona do ok. 500 m — widać las, nie dokładny mech.
           </p>
 
@@ -187,14 +186,14 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
           <div className="mt-4 flex gap-2">
             <button
               type="button"
-              className="flex-1 cursor-pointer rounded-lg border border-forest-pale/40 py-2.5 text-[13px] text-forest-mid transition-colors hover:bg-forest-pale/20"
+              className="flex-1 cursor-pointer rounded-lg border border-line/40 py-2.5 text-[13px] text-content-soft transition-colors hover:bg-line/20"
               onClick={onClose}
             >
               Anuluj
             </button>
             <button
               type="submit"
-              className="flex-1 cursor-pointer rounded-lg bg-forest-mid py-2.5 text-[13px] font-semibold text-cream transition-colors hover:bg-forest-deep disabled:cursor-default disabled:opacity-60"
+              className="flex-1 cursor-pointer rounded-lg bg-fill py-2.5 text-[13px] font-semibold text-inverse transition-colors hover:bg-fill-strong disabled:cursor-default disabled:opacity-60"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Wysyłanie…" : "Dodaj zgłoszenie"}

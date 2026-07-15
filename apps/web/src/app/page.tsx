@@ -31,7 +31,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main>
       {sightings === null && (
-        <div className="fixed left-1/2 top-[72px] z-[1000] -translate-x-1/2 rounded-lg border border-muted bg-cream px-4 py-2 text-sm">
+        <div className="fixed left-1/2 top-18 z-modal -translate-x-1/2 rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm">
           Nie udało się pobrać zgłoszeń — sprawdź, czy API działa.
         </div>
       )}

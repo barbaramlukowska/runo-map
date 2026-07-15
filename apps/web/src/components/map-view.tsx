@@ -11,7 +11,7 @@ const SightingsMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-dvh items-center justify-center text-forest-soft">
+      <div className="flex h-dvh items-center justify-center text-content-muted">
         Wczytywanie mapy…
       </div>
     ),

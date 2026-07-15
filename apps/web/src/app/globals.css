@@ -1,21 +1,80 @@
 @import "tailwindcss";
 
-/* Design tokens from docs/design/mockup-mvp.html (Tailwind v4 CSS-first theme). */
-@theme {
-  --color-forest-deep: #1a3c2a;
-  --color-forest-mid: #2d5a3d;
-  --color-forest-soft: #5a8a5c;
-  --color-forest-pale: #a0c49d;
-  --color-cream: #fdfbf7;
-  --color-amber: #d97706;
-  --color-muted: #d8d4ce;
-  --color-bark: #5c4033;
+/* ============================================================
+   Tier 1 — Primitives (raw palette; generate no utilities).
+   JS mirror lives in src/lib/tokens.ts — keep hex values in sync.
+   ============================================================ */
+:root {
+  --forest-deep: #1a3c2a;
+  --forest-mid: #2d5a3d; /* absorbs old #2d4c3b (pin-fresh) */
+  --forest-moss: #4e7a50; /* readable muted green for text (WCAG AA) */
+  --forest-soft: #5a8a5c; /* pin "recent" (graphic) */
+  --forest-sage: #8a9a88; /* map: icon stroke on old pin */
+  --forest-pale: #a0c49d;
+  --cream: #fdfbf7;
+  --muted: #d8d4ce;
+  --amber: #b45309; /* darkened from #d97706 for AA text */
+  --bark: #5c4033; /* brand palette; no semantic role yet */
+  --red: #b3261e;
 
-  /* Font variables are set on <html> by next/font in layout.tsx. */
+  --z-panel: 500;
+  --z-topbar: 600;
+  --z-modal: 1000;
+}
+
+/* ============================================================
+   Tier 2 — Semantic tokens (generate utilities).
+   ============================================================ */
+@theme {
+  --color-surface: var(--cream);
+  --color-content: var(--forest-deep);
+  --color-content-soft: var(--forest-mid);
+  --color-content-muted: var(--forest-moss);
+  --color-inverse: var(--cream);
+  --color-line: var(--forest-pale);
+  --color-line-strong: var(--muted);
+  --color-fill: var(--forest-mid);
+  --color-fill-strong: var(--forest-deep);
+  --color-accent: var(--amber);
+  --color-danger: var(--red);
+  --color-fresh: var(--forest-mid);
+  --color-recent: var(--forest-soft);
+  --color-stale: var(--muted);
+
+  --shadow-toggle: 0 3px 10px rgba(45, 76, 59, 0.25);
+  --shadow-panel: 0 8px 32px rgba(26, 60, 42, 0.15);
+  --shadow-sheet: 0 -8px 32px rgba(26, 60, 42, 0.25);
+  --shadow-chip: 0 1px 4px rgba(45, 90, 61, 0.3);
+
   --font-sans: var(--font-work-sans), system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), Georgia, serif;
 }
 
+/* Named z-index utilities (Tailwind v4 has no z-index theme namespace). */
+@utility z-panel {
+  z-index: var(--z-panel);
+}
+@utility z-topbar {
+  z-index: var(--z-topbar);
+}
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+
+/* Typography roles — collapse repeated utility clusters. */
+@utility text-eyebrow {
+  @apply text-[10px] font-medium uppercase tracking-widest text-content-muted;
+}
+@utility text-label {
+  @apply text-xs font-semibold uppercase tracking-wider text-content;
+}
+@utility text-latin {
+  @apply text-[10px] font-light italic text-content-muted;
+}
+@utility text-title {
+  @apply font-serif text-lg text-content;
+}
+
 body {
-  @apply bg-cream font-sans text-forest-deep;
+  @apply bg-surface font-sans text-content;
 }

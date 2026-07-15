@@ -21,30 +21,30 @@ export function AboutModal({ onClose }: AboutModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[1000] flex items-center justify-center bg-forest-deep/40 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-content/40 p-4 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="about-title"
-        className="relative w-full max-w-sm rounded-2xl border border-forest-pale/30 bg-cream/95 p-6 shadow-[0_8px_32px_rgba(26,60,42,0.15)] backdrop-blur-lg"
+        className="relative w-full max-w-sm rounded-2xl border border-line/30 bg-surface/95 p-6 shadow-panel backdrop-blur-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           ref={closeRef}
           type="button"
           aria-label="Zamknij"
-          className="absolute right-4 top-4 cursor-pointer text-lg text-forest-mid hover:text-forest-deep"
+          className="absolute right-4 top-4 cursor-pointer text-lg text-content-soft hover:text-content"
           onClick={onClose}
         >
           ✕
         </button>
-        <h2 id="about-title" className="font-serif text-lg text-forest-deep">
+        <h2 id="about-title" className="text-title">
           Runo Map
         </h2>
-        <p className="mb-4 text-xs text-forest-mid/70">Społecznościowa mapa grzybów w Polsce</p>
-        <div className="space-y-3 text-xs text-forest-deep">
+        <p className="mb-4 text-xs text-content-muted">Społecznościowa mapa grzybów w Polsce</p>
+        <div className="space-y-3 text-xs text-content">
           <p>
             <span className="font-semibold">Przeglądaj zgłoszenia</span> — sprawdź, gdzie ostatnio
             sypnęło grzybami.
