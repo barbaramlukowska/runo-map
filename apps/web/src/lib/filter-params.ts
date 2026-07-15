@@ -32,12 +32,19 @@ export function presetToFromParam(days: DayPreset, now: Date): string | undefine
   return from.toISOString();
 }
 
-// Query string page.tsx forwards to GET /api/sightings.
-export function buildApiQuery(species: Species[], days: DayPreset, now: Date): string {
+// Query string MapView forwards to GET /api/sightings. bbox is the visible map
+// area (Leaflet's toBBoxString); null before the map reports its first bounds.
+export function buildApiQuery(
+  species: Species[],
+  days: DayPreset,
+  now: Date,
+  bbox: string | null,
+): string {
   const params = new URLSearchParams();
   for (const s of species) params.append("species", s);
   const from = presetToFromParam(days, now);
   if (from) params.set("from", from);
+  if (bbox) params.set("bbox", bbox);
   return params.toString();
 }
 

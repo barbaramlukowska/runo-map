@@ -1,8 +1,10 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { Sighting } from "@runo-map/shared";
+import { buildApiQuery, parseDaysParam, parseSpeciesParam } from "@/lib/filter-params";
 import { ReportForm } from "./report-form";
 
 // Leaflet touches `window` on import, so the map must never render on the server.
@@ -18,18 +20,68 @@ const SightingsMap = dynamic(
   },
 );
 
-interface MapViewProps {
-  sightings: Sighting[];
-}
-
-export function MapView({ sightings }: MapViewProps) {
+// Owns the sightings data: fetches client-side whenever filters (URL) or the
+// visible map area (bbox) change, plus after a new report. Old pins stay on
+// screen during a refetch (stale-while-revalidate); a separate error flag keeps
+// the initial "not loaded yet" state from rendering the error banner.
+export function MapView() {
+  const searchParams = useSearchParams();
+  const [sightings, setSightings] = useState<Sighting[]>([]);
+  const [fetchFailed, setFetchFailed] = useState(false);
+  const [bbox, setBbox] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
   const [pendingLocation, setPendingLocation] = useState<{ lat: number; lng: number } | null>(null);
+
+  const handleBboxChange = useCallback((next: string) => setBbox(next), []);
+  const handleReported = useCallback(() => setReloadKey((key) => key + 1), []);
+
+  useEffect(() => {
+    // No fetch until the map reports its first bounds.
+    if (bbox === null) return;
+
+    const species = parseSpeciesParam(searchParams.getAll("species"));
+    const days = parseDaysParam(searchParams.get("days") ?? undefined);
+    const query = buildApiQuery(species, days, new Date(), bbox);
+
+    // Abort the previous in-flight request before starting the next one so
+    // rapid map movement can't land results out of order.
+    const controller = new AbortController();
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/sightings?${query}`, {
+      signal: controller.signal,
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Bad response");
+        const data = (await res.json()) as Sighting[];
+        setSightings(data);
+        setFetchFailed(false);
+      })
+      .catch((error) => {
+        // Aborts are expected during rapid movement — not an API failure.
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setFetchFailed(true);
+      });
+
+    return () => controller.abort();
+  }, [searchParams, bbox, reloadKey]);
 
   return (
     <>
-      <SightingsMap sightings={sightings} onMapClick={setPendingLocation} />
+      {fetchFailed && (
+        <div className="fixed left-1/2 top-18 z-modal -translate-x-1/2 rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm">
+          Nie udało się pobrać zgłoszeń — sprawdź, czy API działa.
+        </div>
+      )}
+      <SightingsMap
+        sightings={sightings}
+        onMapClick={setPendingLocation}
+        onBboxChange={handleBboxChange}
+      />
       {pendingLocation && (
-        <ReportForm location={pendingLocation} onClose={() => setPendingLocation(null)} />
+        <ReportForm
+          location={pendingLocation}
+          onClose={() => setPendingLocation(null)}
+          onReported={handleReported}
+        />
       )}
     </>
   );

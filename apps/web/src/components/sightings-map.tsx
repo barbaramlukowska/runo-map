@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { divIcon, type MarkerCluster } from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMapEvents } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-markercluster";
@@ -64,12 +65,28 @@ function MapClickHandler({ onMapClick }: { onMapClick: (location: { lat: number;
   return null;
 }
 
+// Bridges Leaflet map movement to React state in the parent. Reports the visible
+// area as a bbox string on every completed pan/zoom (moveend) and once on mount,
+// so the initial fetch is keyed on the actual viewport.
+function BboxHandler({ onBboxChange }: { onBboxChange: (bbox: string) => void }) {
+  const map = useMapEvents({
+    moveend() {
+      onBboxChange(map.getBounds().toBBoxString());
+    },
+  });
+  useEffect(() => {
+    onBboxChange(map.getBounds().toBBoxString());
+  }, [map, onBboxChange]);
+  return null;
+}
+
 interface SightingsMapProps {
   sightings: Sighting[];
   onMapClick?: (location: { lat: number; lng: number }) => void;
+  onBboxChange?: (bbox: string) => void;
 }
 
-export function SightingsMap({ sightings, onMapClick }: SightingsMapProps) {
+export function SightingsMap({ sightings, onMapClick, onBboxChange }: SightingsMapProps) {
   const now = new Date();
 
   return (
@@ -86,6 +103,7 @@ export function SightingsMap({ sightings, onMapClick }: SightingsMapProps) {
       />
       <ZoomControl position="bottomright" />
       {onMapClick && <MapClickHandler onMapClick={onMapClick} />}
+      {onBboxChange && <BboxHandler onBboxChange={onBboxChange} />}
       <MarkerClusterGroup
         iconCreateFunction={clusterIcon}
         maxClusterRadius={60}

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Controller, useForm, type Resolver } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { SPECIES, SPECIES_LABELS, sightingInputSchema } from "@runo-map/shared";
 import { toSightingInput, type ReportFormValues } from "@/lib/report-input";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface ReportFormProps {
   location: { lat: number; lng: number };
   onClose: () => void;
+  onReported: () => void;
 }
 
 const FIELD_MESSAGES_PL: Record<string, string> = {
@@ -59,8 +59,7 @@ const todayIso = () => new Date().toISOString().slice(0, 10);
 const LABEL_CLASS = "mb-1 text-xs font-semibold uppercase tracking-wider text-content";
 const ERROR_CLASS = "mt-1 text-[11px] text-danger";
 
-export function ReportForm({ location, onClose }: ReportFormProps) {
-  const router = useRouter();
+export function ReportForm({ location, onClose, onReported }: ReportFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
@@ -86,8 +85,9 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
         body: JSON.stringify(toSightingInput(values, location)),
       });
       if (res.status === 201) {
+        // Refetch through MapView's single data path; no SSR to revalidate.
+        onReported();
         onClose();
-        router.refresh();
         return;
       }
       if (res.status === 429) {

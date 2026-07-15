@@ -72,16 +72,40 @@ describe("presetToFromParam", () => {
 });
 
 describe("buildApiQuery", () => {
-  it("is empty without active filters", () => {
-    expect(buildApiQuery([], "all", now)).toBe("");
+  it("is empty without active filters and no bbox", () => {
+    expect(buildApiQuery([], "all", now, null)).toBe("");
   });
 
   it("repeats species and converts the day preset to from", () => {
-    const query = new URLSearchParams(buildApiQuery(["BOROWIK", "KURKA"], 7, now));
+    const query = new URLSearchParams(buildApiQuery(["BOROWIK", "KURKA"], 7, now, null));
 
     expect(query.getAll("species")).toEqual(["BOROWIK", "KURKA"]);
     expect(query.get("from")).toBe("2026-07-08T00:00:00.000Z");
     expect(query.has("days")).toBe(false);
+  });
+
+  it("appends bbox when present", () => {
+    const query = new URLSearchParams(
+      buildApiQuery([], "all", now, "19.0,52.0,20.0,53.0"),
+    );
+
+    expect(query.get("bbox")).toBe("19.0,52.0,20.0,53.0");
+  });
+
+  it("omits bbox when null", () => {
+    const query = new URLSearchParams(buildApiQuery([], "all", now, null));
+
+    expect(query.has("bbox")).toBe(false);
+  });
+
+  it("combines bbox with species and from", () => {
+    const query = new URLSearchParams(
+      buildApiQuery(["BOROWIK"], 7, now, "19.0,52.0,20.0,53.0"),
+    );
+
+    expect(query.getAll("species")).toEqual(["BOROWIK"]);
+    expect(query.get("from")).toBe("2026-07-08T00:00:00.000Z");
+    expect(query.get("bbox")).toBe("19.0,52.0,20.0,53.0");
   });
 });
 
