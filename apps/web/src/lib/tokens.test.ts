@@ -44,9 +44,14 @@ describe("token contrast (WCAG 2.2 AA text)", () => {
     ["content on surface", COLOR.forestDeep, COLOR.cream],
     ["content-soft on surface", COLOR.forestMid, COLOR.cream],
     ["content-muted on surface", COLOR.forestMoss, COLOR.cream],
-    ["accent on surface", COLOR.amber, COLOR.cream],
+    ["action on surface", COLOR.amber, COLOR.cream],
     ["danger on surface", COLOR.red, COLOR.cream],
     ["inverse on fill", COLOR.cream, COLOR.forestMid],
+    // shadcn bridge pairs (globals.css :root)
+    ["muted-foreground on muted", COLOR.forestMid, COLOR.creamDim],
+    ["secondary-foreground on secondary", COLOR.forestDeep, COLOR.creamDim],
+    ["accent-foreground on accent", COLOR.forestDeep, COLOR.creamDim],
+    ["destructive-foreground on destructive", COLOR.cream, COLOR.red],
   ])("%s meets AA", (_label, fg, bg) => {
     expect(contrast(fg, bg)).toBeGreaterThanOrEqual(AA);
   });

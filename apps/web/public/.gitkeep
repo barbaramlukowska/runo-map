@@ -1,0 +1,2 @@
+# Statyczne assety serwowane przez Next pod URL-em / (favicon nadpisany przez app/icon.svg,
+# rastry, og-image). Ikony jako kod SVG idą do src/components/icons/, nie tutaj.

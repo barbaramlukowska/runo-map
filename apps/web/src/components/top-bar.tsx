@@ -2,25 +2,8 @@
 
 import { useState } from "react";
 import { AboutModal } from "./about-modal";
-
-// Same mushroom path the map pins use.
-function MushroomLogo() {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true" className="text-content">
-      <path
-        d="M12 3C7.5 3 4 6.5 4 10c0 2.5 1.5 4.5 3.5 5.5V19c0 .6.4 1 1 1h7c.6 0 1-.4 1-1v-3.5C18.5 14.5 20 12.5 20 10c0-3.5-3.5-7-8-7z"
-        fill="currentColor"
-        opacity="0.15"
-      />
-      <path
-        d="M12 3C7.5 3 4 6.5 4 10c0 2.5 1.5 4.5 3.5 5.5V19c0 .6.4 1 1 1h7c.6 0 1-.4 1-1v-3.5C18.5 14.5 20 12.5 20 10c0-3.5-3.5-7-8-7z"
-        stroke="currentColor"
-        strokeWidth="1.2"
-      />
-      <line x1="12" y1="15.5" x2="12" y2="20" stroke="currentColor" strokeWidth="1.2" />
-    </svg>
-  );
-}
+import { RunoLogo } from "./icons/runo-logo";
+import { Button } from "@/components/ui/button";
 
 // z-index 600: above the filter panel (500), below modals (1000).
 export function TopBar() {
@@ -32,29 +15,33 @@ export function TopBar() {
       <header className="fixed inset-x-0 top-0 z-topbar border-b border-line/40 bg-surface/93 backdrop-blur-[20px]">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-3">
-          <MushroomLogo />
+          <RunoLogo />
           <span className="font-serif text-xl tracking-wide text-content">Runo Map</span>
           <span className="hidden border-l border-line/40 pl-3 text-xs font-light uppercase tracking-widest text-content-muted sm:inline">
             Polska
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             aria-expanded={legendOpen}
             aria-controls="legend-panel"
-            className="cursor-pointer rounded-sm border border-line/50 px-3 py-1 text-xs uppercase tracking-widest text-content-muted transition-colors hover:bg-fill/10"
+            className="rounded-sm border-line/50 text-xs uppercase tracking-widest text-content-muted hover:bg-fill/10 hover:text-content-muted"
             onClick={() => setLegendOpen(!legendOpen)}
           >
             Legenda
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            className="hidden cursor-pointer text-xs uppercase tracking-widest text-content-muted transition-colors hover:text-content md:block"
+            variant="ghost"
+            size="sm"
+            className="hidden text-xs uppercase tracking-widest text-content-muted hover:bg-transparent hover:text-content md:inline-flex"
             onClick={() => setAboutOpen(true)}
           >
             O aplikacji
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -91,7 +78,7 @@ export function TopBar() {
         </div>
       </div>
       </header>
-      {aboutOpen && <AboutModal onClose={() => setAboutOpen(false)} />}
+      <AboutModal open={aboutOpen} onOpenChange={setAboutOpen} />
     </>
   );
 }
