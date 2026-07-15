@@ -2,7 +2,7 @@
 
 *Runo — Polish for the forest floor harvest: mushrooms, berries, and everything you forage.*
 
-> Work in progress — **Stage 3 (map UI) in progress**: full-screen map with clustered, age-faded pins backed by the real API; sighting form up next. This README grows with the project.
+> Work in progress — **Stage 3 (map UI) complete**: full-screen map with clustered, age-faded pins backed by the real API, a multi-select filter panel, a sighting form, and a Tailwind CSS v4 design-token system (WCAG AA contrast). Deploy + CI (Stage 3.5) up next. This README grows with the project.
 
 A community map of mushroom sightings in Poland. Users anonymously report finds (species, date, approximate location) and browse what others have found nearby — a *give-to-get* model for mushroom pickers.
 
@@ -16,6 +16,7 @@ UI text is in Polish (the app targets mushroom pickers in Poland); code, docs an
 |---|---|
 | Monorepo | Turborepo + pnpm workspaces |
 | Frontend | Next.js (App Router) + react-leaflet |
+| Styling | Tailwind CSS v4 with a two-tier design-token system |
 | Backend | Express 5 + Prisma 7 |
 | Database | PostgreSQL on Supabase |
 | Shared validation | Zod schemas in `packages/shared` |
@@ -37,6 +38,8 @@ runo-map/
 ```
 
 Why a monorepo? One Zod schema in `packages/shared` validates the form on the frontend **and** the request on the backend — single definition, two consumers.
+
+Why two-tier tokens? The frontend colors live as a two-layer system in `apps/web/src/app/globals.css`: Tier 1 primitives (raw palette) feed Tier 2 semantic tokens (`--color-surface`, `--color-content`, `--color-fill`…) that generate the Tailwind utilities. A JS mirror in `apps/web/src/lib/tokens.ts` lets a Vitest test assert WCAG AA contrast on every text/background pair — so a palette tweak that would drop below 4.5:1 fails CI instead of shipping.
 
 ## Getting started
 
@@ -105,7 +108,7 @@ The swap in Stage 2 didn't change a single route.
 - [x] **Stage 0** — Turborepo + pnpm scaffold, shared package wired into both apps
 - [x] **Stage 1** — Express API with in-memory data, tests from day one
 - [x] **Stage 2** — PostgreSQL (Supabase) + Prisma migrations, seed, store swap
-- [ ] **Stage 3** *(in progress)* — Map UI: react-leaflet, clustering, filters, freshness fading
+- [x] **Stage 3** — Map UI: react-leaflet, clustering, filters, freshness fading, sighting form, Tailwind design system
 - [ ] **Stage 3.5** — Deploy (Vercel + Render) and CI (GitHub Actions)
 - [ ] **Stage 4** — AI assistant with tool calling (sightings + weather)
 
