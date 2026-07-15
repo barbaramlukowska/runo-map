@@ -7,3 +7,12 @@ src/generated/
 .env
 .env.*
 !.env.example
+
+# local-only project config (MCP servers) — not shared to the repo
+.mcp.json
+
+# local planning docs (superpowers SDD)
+docs/
+CLAUDE.md
+docs/coding-conventions.md
+

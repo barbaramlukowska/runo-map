@@ -1,10 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { useState } from "react";
+import { Controller, useForm, type Resolver } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { SPECIES, SPECIES_LABELS, sightingInputSchema } from "@runo-map/shared";
 import { toSightingInput, type ReportFormValues } from "@/lib/report-input";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ReportFormProps {
   location: { lat: number; lng: number };
@@ -38,18 +56,16 @@ function makeResolver(location: { lat: number; lng: number }): Resolver<ReportFo
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 
-const LABEL_CLASS = "mb-1 block text-label";
-const INPUT_CLASS =
-  "w-full rounded-lg border border-line/40 bg-line/20 px-3 py-2.5 text-[13px] text-content focus:border-fill focus:outline-none";
+const LABEL_CLASS = "mb-1 text-xs font-semibold uppercase tracking-wider text-content";
 const ERROR_CLASS = "mt-1 text-[11px] text-danger";
 
 export function ReportForm({ location, onClose }: ReportFormProps) {
   const router = useRouter();
-  const firstFieldRef = useRef<HTMLSelectElement | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
 
   const {
     register,
+    control,
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
@@ -57,20 +73,6 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
     resolver: makeResolver(location),
     defaultValues: { species: SPECIES[0], foundAt: todayIso(), comment: "" },
   });
-
-  // Esc closes the dialog.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose]);
-
-  // Focus the first field when the dialog opens.
-  useEffect(() => {
-    firstFieldRef.current?.focus();
-  }, []);
 
   const commentLength = watch("comment")?.length ?? 0;
   const rootError = (errors as { root?: { message?: string } }).root?.message;
@@ -102,72 +104,76 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
     }
   });
 
-  // Merge react-hook-form's ref with ours so we can focus the select on open.
-  const { ref: speciesRef, ...speciesField } = register("species");
-
   return (
-    <div
-      className="fixed inset-0 z-modal flex items-center justify-center bg-content/40 p-4 backdrop-blur-sm"
-      onClick={onClose}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
     >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="report-form-title"
-        className="w-full max-w-sm rounded-2xl border border-line/30 bg-surface/95 p-6 shadow-panel backdrop-blur-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <h2 id="report-form-title" className="text-title">
-          Zgłoś znalezisko
-        </h2>
-        <p className="mb-4 mt-0.5 text-xs text-content-muted">
-          Podziel się obserwacją ze społecznością
-        </p>
+      <DialogContent className="max-w-sm rounded-2xl border-line/30 bg-surface/95 shadow-panel backdrop-blur-lg sm:max-w-sm">
+        <DialogHeader className="text-left">
+          <DialogTitle className="font-serif text-lg font-normal text-content">
+            Zgłoś znalezisko
+          </DialogTitle>
+          <DialogDescription className="text-xs text-content-muted">
+            Podziel się obserwacją ze społecznością
+          </DialogDescription>
+        </DialogHeader>
 
         <form onSubmit={onSubmit} className="grid gap-3">
           <div>
-            <label htmlFor="species" className={LABEL_CLASS}>
+            <Label htmlFor="species" className={LABEL_CLASS}>
               Gatunek
-            </label>
-            <select
-              id="species"
-              className={INPUT_CLASS}
-              ref={(el) => {
-                speciesRef(el);
-                firstFieldRef.current = el;
-              }}
-              {...speciesField}
-            >
-              {SPECIES.map((s) => (
-                <option key={s} value={s}>
-                  {SPECIES_LABELS[s].pl}
-                </option>
-              ))}
-            </select>
+            </Label>
+            <Controller
+              control={control}
+              name="species"
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="species" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SPECIES.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {SPECIES_LABELS[s].pl}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
             {errors.species && <p className={ERROR_CLASS}>{errors.species.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="foundAt" className={LABEL_CLASS}>
+            <Label htmlFor="foundAt" className={LABEL_CLASS}>
               Data znalezienia
-            </label>
-            <input id="foundAt" type="date" className={INPUT_CLASS} {...register("foundAt")} />
+            </Label>
+            <Input
+              id="foundAt"
+              type="date"
+              aria-invalid={errors.foundAt ? true : undefined}
+              {...register("foundAt")}
+            />
             {errors.foundAt && <p className={ERROR_CLASS}>{errors.foundAt.message}</p>}
           </div>
 
           <div>
             <div className="flex items-center justify-between">
-              <label htmlFor="comment" className={LABEL_CLASS}>
+              <Label htmlFor="comment" className={LABEL_CLASS}>
                 Komentarz (opcjonalnie)
-              </label>
+              </Label>
               <span className="text-[10px] text-content-muted">{commentLength}/280</span>
             </div>
-            <textarea
+            <Textarea
               id="comment"
               rows={2}
               maxLength={280}
               placeholder="Np. skraj lasu iglastego, dużo młodych…"
-              className={`${INPUT_CLASS} resize-none`}
+              className="resize-none"
+              aria-invalid={errors.comment ? true : undefined}
               {...register("comment")}
             />
             {errors.comment && <p className={ERROR_CLASS}>{errors.comment.message}</p>}
@@ -184,23 +190,15 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
           )}
 
           <div className="mt-4 flex gap-2">
-            <button
-              type="button"
-              className="flex-1 cursor-pointer rounded-lg border border-line/40 py-2.5 text-[13px] text-content-soft transition-colors hover:bg-line/20"
-              onClick={onClose}
-            >
+            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
               Anuluj
-            </button>
-            <button
-              type="submit"
-              className="flex-1 cursor-pointer rounded-lg bg-fill py-2.5 text-[13px] font-semibold text-inverse transition-colors hover:bg-fill-strong disabled:cursor-default disabled:opacity-60"
-              disabled={isSubmitting}
-            >
+            </Button>
+            <Button type="submit" className="flex-1" disabled={isSubmitting}>
               {isSubmitting ? "Wysyłanie…" : "Dodaj zgłoszenie"}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

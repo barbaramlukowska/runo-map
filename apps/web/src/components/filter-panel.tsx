@@ -11,6 +11,9 @@ import {
   parseSpeciesParam,
   type DayPreset,
 } from "@/lib/filter-params";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const DAY_LABELS: Record<DayPreset, string> = {
   3: "3 dni",
@@ -51,15 +54,16 @@ export function FilterPanel() {
 
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="outline"
         aria-expanded={open}
         aria-controls="filter-panel"
-        className="fixed left-4 top-18 z-panel cursor-pointer rounded-lg border border-line/30 bg-surface/92 backdrop-blur-lg px-4 py-2 text-[13px] font-semibold text-content shadow-toggle"
+        className="fixed left-4 top-18 z-panel border-line/30 bg-surface/92 text-[13px] font-semibold text-content shadow-toggle backdrop-blur-lg hover:bg-surface/92 hover:text-content"
         onClick={() => setOpen(!open)}
       >
         Filtry
-      </button>
+      </Button>
       <aside
         id="filter-panel"
         hidden={!open}
@@ -73,34 +77,39 @@ export function FilterPanel() {
             </p>
             <h2 className="text-title">Zgłoszenia</h2>
           </div>
-          <button
+          <Button
             type="button"
-            className="cursor-pointer text-xs font-medium text-accent transition-colors hover:text-content-soft"
+            variant="ghost"
+            size="sm"
+            className="h-auto p-0 text-xs font-medium text-action hover:bg-transparent hover:text-content-soft"
             onClick={() => applyFilters([], "all")}
           >
             Wyczyść
-          </button>
+          </Button>
         </div>
 
         <fieldset className="mb-4 px-4">
           <legend className="mb-2 text-label">Zakres czasu</legend>
-          <div className="flex gap-0.5 rounded-lg bg-line/20 p-0.5">
+          <ToggleGroup
+            type="single"
+            value={days === "all" ? "all" : String(days)}
+            onValueChange={(value) => {
+              // Radix emits "" when the active item is clicked again; a preset
+              // must always stay selected, so ignore deselection.
+              if (value) applyFilters(selected, parseDaysParam(value));
+            }}
+            className="w-full gap-0.5 rounded-lg bg-line/20 p-0.5"
+          >
             {DAY_PRESETS.map((preset) => (
-              <button
+              <ToggleGroupItem
                 key={preset}
-                type="button"
-                aria-pressed={days === preset}
-                className={`flex-1 cursor-pointer rounded-md py-1.5 text-xs font-medium transition-all ${
-                  days === preset
-                    ? "bg-fill text-inverse shadow-chip"
-                    : "text-content-soft"
-                }`}
-                onClick={() => applyFilters(selected, preset)}
+                value={String(preset)}
+                className="flex-1 rounded-md py-1.5 text-xs font-medium text-content-soft data-[state=on]:bg-fill data-[state=on]:text-inverse data-[state=on]:shadow-chip"
               >
                 {DAY_LABELS[preset]}
-              </button>
+              </ToggleGroupItem>
             ))}
-          </div>
+          </ToggleGroup>
         </fieldset>
 
         <div className="border-t border-line/30">
@@ -111,15 +120,15 @@ export function FilterPanel() {
               return (
                 <label
                   key={species}
+                  htmlFor={`species-${species}`}
                   className={`flex cursor-pointer items-center gap-3 border-b border-line/20 px-4 py-3 transition-colors last:border-b-0 ${
                     isSelected ? "bg-fill/10" : "hover:bg-fill/5"
                   }`}
                 >
-                  <input
-                    type="checkbox"
-                    className="h-3.5 w-3.5 cursor-pointer accent-fill"
+                  <Checkbox
+                    id={`species-${species}`}
                     checked={isSelected}
-                    onChange={() => toggleSpecies(species)}
+                    onCheckedChange={() => toggleSpecies(species)}
                   />
                   <span
                     className="h-3 w-3 shrink-0 rounded-full"

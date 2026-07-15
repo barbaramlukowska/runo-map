@@ -1,4 +1,10 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* No dark mode (MVP). Keep the variant class-based so any `dark:` utilities
+   baked into vendored shadcn components never trigger — we never add `.dark`. */
+@custom-variant dark (&:is(.dark *));
 
 /* ============================================================
    Tier 1 — Primitives (raw palette; generate no utilities).
@@ -12,7 +18,8 @@
   --forest-sage: #8a9a88; /* map: icon stroke on old pin */
   --forest-pale: #a0c49d;
   --cream: #fdfbf7;
-  --muted: #d8d4ce;
+  --cream-dim: #f2efe7; /* hover/secondary surfaces for shadcn components */
+  --stone: #d8d4ce; /* warm gray (was --muted; renamed — shadcn owns that name now) */
   --amber: #b45309; /* darkened from #d97706 for AA text */
   --bark: #5c4033; /* brand palette; no semantic role yet */
   --red: #b3261e;
@@ -20,6 +27,32 @@
   --z-panel: 500;
   --z-topbar: 600;
   --z-modal: 1000;
+
+  /* ------------------------------------------------------------
+     shadcn/ui bridge — semantic vars consumed by vendored
+     components in src/components/ui/. Point ONLY at Tier 1
+     primitives; new text/bg pairs need a tokens.test.ts entry.
+     ------------------------------------------------------------ */
+  --background: var(--cream);
+  --foreground: var(--forest-deep);
+  --card: var(--cream);
+  --card-foreground: var(--forest-deep);
+  --popover: var(--cream);
+  --popover-foreground: var(--forest-deep);
+  --primary: var(--forest-mid);
+  --primary-foreground: var(--cream);
+  --secondary: var(--cream-dim);
+  --secondary-foreground: var(--forest-deep);
+  --muted: var(--cream-dim);
+  --muted-foreground: var(--forest-mid);
+  --accent: var(--cream-dim);
+  --accent-foreground: var(--forest-deep);
+  --destructive: var(--red);
+  --destructive-foreground: var(--cream);
+  --border: var(--forest-pale);
+  --input: var(--forest-pale);
+  --ring: var(--forest-mid);
+  --radius: 0.625rem;
 }
 
 /* ============================================================
@@ -32,14 +65,14 @@
   --color-content-muted: var(--forest-moss);
   --color-inverse: var(--cream);
   --color-line: var(--forest-pale);
-  --color-line-strong: var(--muted);
+  --color-line-strong: var(--stone);
   --color-fill: var(--forest-mid);
   --color-fill-strong: var(--forest-deep);
-  --color-accent: var(--amber);
+  --color-action: var(--amber);
   --color-danger: var(--red);
   --color-fresh: var(--forest-mid);
   --color-recent: var(--forest-soft);
-  --color-stale: var(--muted);
+  --color-stale: var(--stone);
 
   --shadow-toggle: 0 3px 10px rgba(45, 76, 59, 0.25);
   --shadow-panel: 0 8px 32px rgba(26, 60, 42, 0.15);
@@ -48,6 +81,33 @@
 
   --font-sans: var(--font-work-sans), system-ui, sans-serif;
   --font-serif: var(--font-instrument-serif), Georgia, serif;
+}
+
+/* shadcn/ui bridge utilities (bg-background, bg-primary, ...). */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 /* Named z-index utilities (Tailwind v4 has no z-index theme namespace). */
@@ -75,6 +135,18 @@
   @apply font-serif text-lg text-content;
 }
 
-body {
-  @apply bg-surface font-sans text-content;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-surface font-sans text-content;
+  }
+  /* Tailwind v4 preflight sets buttons to the default arrow cursor; restore the
+     pointer so interactive controls read as clickable. Covers our Buttons plus
+     radix primitives (Checkbox, ToggleGroupItem) — all rendered as <button>. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
 }

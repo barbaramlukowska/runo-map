@@ -14,7 +14,7 @@ const POLAND_CENTER: [number, number] = [52.0, 19.5];
 const PIN_STYLES: Record<PinAge, { background: string; iconColor: string; size: number }> = {
   fresh: { background: COLOR.forestMid, iconColor: COLOR.cream, size: 30 },
   recent: { background: COLOR.forestSoft, iconColor: COLOR.cream, size: 24 },
-  older: { background: COLOR.muted, iconColor: COLOR.forestSage, size: 20 },
+  older: { background: COLOR.stone, iconColor: COLOR.forestSage, size: 20 },
 };
 
 function mushroomPin(age: PinAge) {
