@@ -242,6 +242,11 @@ describe("security headers", () => {
 
     expect(res.headers["x-content-type-options"]).toBe("nosniff");
   });
+
+  it("trusts a single proxy layer (Render reverse proxy)", () => {
+    const app = createApp();
+    expect(app.get("trust proxy")).toBe(1);
+  });
 });
 
 describe("GET /api/health", () => {

@@ -11,6 +11,10 @@ import { createStore, type Store } from "./store.js";
 export function createApp(store: Store = createStore(demoSeed)): Express {
   const app = express();
 
+  // Behind Render's reverse proxy: read the client IP from X-Forwarded-For
+  // (one proxy layer) so express-rate-limit keys on the real client, not the proxy.
+  app.set("trust proxy", 1);
+
   app.use(helmet());
   // Browser POSTs come straight from the web app; reflect only its origin.
   // origin as an array (not a plain string) makes cors omit the header for
