@@ -25,7 +25,11 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       # Prisma client is gitignored; generate it before typecheck/build.
+      # prisma.config.ts resolves env("DIRECT_URL") eagerly; generate never
+      # connects, so a placeholder URL satisfies the config loader in CI.
       - run: pnpm --filter @runo-map/api exec prisma generate
+        env:
+          DIRECT_URL: postgresql://placeholder@localhost:5432/placeholder
       # Supply chain (OWASP A03): fail on a known high/critical advisory.
       - run: pnpm audit --audit-level=high
       - run: pnpm typecheck
