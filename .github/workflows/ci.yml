@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      # Prisma client is gitignored; generate it before typecheck/build.
+      # prisma.config.ts resolves env("DIRECT_URL") eagerly; generate never
+      # connects, so a placeholder URL satisfies the config loader in CI.
+      - run: pnpm --filter @runo-map/api exec prisma generate
+        env:
+          DIRECT_URL: postgresql://placeholder@localhost:5432/placeholder
+      # Supply chain (OWASP A03): fail on any known advisory in the dependency
+      # tree. Replaces `pnpm audit` — npm retired the legacy audit endpoint it
+      # calls (HTTP 410). osv-scanner reads pnpm-lock.yaml against the OSV/GHSA
+      # database instead.
+      - uses: google/osv-scanner-action/osv-scanner-action@v2.3.8
+        with:
+          scan-args: |-
+            --lockfile=pnpm-lock.yaml
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build

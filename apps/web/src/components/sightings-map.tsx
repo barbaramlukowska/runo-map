@@ -7,6 +7,7 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 import { SPECIES_LABELS, type Sighting } from "@runo-map/shared";
 import { pinAgeCategory, type PinAge } from "@/lib/pin-age";
 import { COLOR } from "@/lib/tokens";
+import { buildTileUrl } from "@/lib/tile-url";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/styles";
 
@@ -98,7 +99,7 @@ export function SightingsMap({ sightings, onMapClick, onBboxChange }: SightingsM
     >
       {/* Alidade Smooth: muted style + local (Polish) labels. Keyless on localhost; API key needed at deploy. */}
       <TileLayer
-        url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
+        url={buildTileUrl(process.env.NEXT_PUBLIC_STADIA_API_KEY)}
         attribution='&copy; <a href="https://www.stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
       />
       <ZoomControl position="bottomright" />
