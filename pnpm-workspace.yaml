@@ -7,3 +7,10 @@ onlyBuiltDependencies:
   - "@prisma/engines"
   - prisma
   - esbuild
+
+# Supply chain (OWASP A03): pin transitive deps to advisory-free versions.
+# - postcss <8.4.31 fix: GHSA-qx2v-qp2m-jg93 (ReDoS), pulled in by next
+# - @hono/node-server <1.19.13 fix: GHSA-92pp-h63x-v22m, dev-only tooling
+overrides:
+  postcss: "^8.5.19"
+  "@hono/node-server": "^1.19.13"
