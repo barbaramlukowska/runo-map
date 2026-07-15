@@ -11,15 +11,7 @@ const SightingsMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div
-        style={{
-          height: "100dvh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          color: "#5a8a5c",
-        }}
-      >
+      <div className="flex h-dvh items-center justify-center text-content-muted">
         Wczytywanie mapy…
       </div>
     ),

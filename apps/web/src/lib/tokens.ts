@@ -1,0 +1,15 @@
+// JS mirror of the CSS primitives in globals.css :root.
+// Single source of truth is that :root block — keep these hex values identical.
+export const COLOR = {
+  forestDeep: "#1a3c2a",
+  forestMid: "#2d5a3d",
+  forestMoss: "#4e7a50",
+  forestSoft: "#5a8a5c",
+  forestSage: "#8a9a88",
+  forestPale: "#a0c49d",
+  cream: "#fdfbf7",
+  muted: "#d8d4ce",
+  amber: "#b45309",
+  bark: "#5c4033",
+  red: "#b3261e",
+} as const;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { SPECIES, SPECIES_LABELS, sightingInputSchema } from "@runo-map/shared";
@@ -37,6 +37,11 @@ function makeResolver(location: { lat: number; lng: number }): Resolver<ReportFo
 }
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
+
+const LABEL_CLASS = "mb-1 block text-label";
+const INPUT_CLASS =
+  "w-full rounded-lg border border-line/40 bg-line/20 px-3 py-2.5 text-[13px] text-content focus:border-fill focus:outline-none";
+const ERROR_CLASS = "mt-1 text-[11px] text-danger";
 
 export function ReportForm({ location, onClose }: ReportFormProps) {
   const router = useRouter();
@@ -101,27 +106,32 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
   const { ref: speciesRef, ...speciesField } = register("species");
 
   return (
-    <div style={overlayStyle} onClick={onClose}>
+    <div
+      className="fixed inset-0 z-modal flex items-center justify-center bg-content/40 p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="report-form-title"
-        style={panelStyle}
+        className="w-full max-w-sm rounded-2xl border border-line/30 bg-surface/95 p-6 shadow-panel backdrop-blur-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 id="report-form-title" style={titleStyle}>
+        <h2 id="report-form-title" className="text-title">
           Zgłoś znalezisko
         </h2>
-        <p style={subtitleStyle}>Podziel się obserwacją ze społecznością</p>
+        <p className="mb-4 mt-0.5 text-xs text-content-muted">
+          Podziel się obserwacją ze społecznością
+        </p>
 
-        <form onSubmit={onSubmit} style={{ display: "grid", gap: 12 }}>
+        <form onSubmit={onSubmit} className="grid gap-3">
           <div>
-            <label htmlFor="species" style={labelStyle}>
+            <label htmlFor="species" className={LABEL_CLASS}>
               Gatunek
             </label>
             <select
               id="species"
-              style={inputStyle}
+              className={INPUT_CLASS}
               ref={(el) => {
                 speciesRef(el);
                 firstFieldRef.current = el;
@@ -134,50 +144,58 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
                 </option>
               ))}
             </select>
-            {errors.species && <p style={errorStyle}>{errors.species.message}</p>}
+            {errors.species && <p className={ERROR_CLASS}>{errors.species.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="foundAt" style={labelStyle}>
+            <label htmlFor="foundAt" className={LABEL_CLASS}>
               Data znalezienia
             </label>
-            <input id="foundAt" type="date" style={inputStyle} {...register("foundAt")} />
-            {errors.foundAt && <p style={errorStyle}>{errors.foundAt.message}</p>}
+            <input id="foundAt" type="date" className={INPUT_CLASS} {...register("foundAt")} />
+            {errors.foundAt && <p className={ERROR_CLASS}>{errors.foundAt.message}</p>}
           </div>
 
           <div>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-              <label htmlFor="comment" style={labelStyle}>
+            <div className="flex items-center justify-between">
+              <label htmlFor="comment" className={LABEL_CLASS}>
                 Komentarz (opcjonalnie)
               </label>
-              <span style={counterStyle}>{commentLength}/280</span>
+              <span className="text-[10px] text-content-muted">{commentLength}/280</span>
             </div>
             <textarea
               id="comment"
               rows={2}
               maxLength={280}
               placeholder="Np. skraj lasu iglastego, dużo młodych…"
-              style={{ ...inputStyle, resize: "none" }}
+              className={`${INPUT_CLASS} resize-none`}
               {...register("comment")}
             />
-            {errors.comment && <p style={errorStyle}>{errors.comment.message}</p>}
+            {errors.comment && <p className={ERROR_CLASS}>{errors.comment.message}</p>}
           </div>
 
-          <p style={noteStyle}>
+          <p className="text-[10px] font-light leading-relaxed text-content-muted">
             Lokalizacja zostanie zaokrąglona do ok. 500 m — widać las, nie dokładny mech.
           </p>
 
           {(rootError || serverError) && (
-            <p style={errorStyle} role="alert">
+            <p className={ERROR_CLASS} role="alert">
               {rootError ?? serverError}
             </p>
           )}
 
-          <div style={actionsStyle}>
-            <button type="button" style={cancelStyle} onClick={onClose}>
+          <div className="mt-4 flex gap-2">
+            <button
+              type="button"
+              className="flex-1 cursor-pointer rounded-lg border border-line/40 py-2.5 text-[13px] text-content-soft transition-colors hover:bg-line/20"
+              onClick={onClose}
+            >
               Anuluj
             </button>
-            <button type="submit" style={submitStyle} disabled={isSubmitting}>
+            <button
+              type="submit"
+              className="flex-1 cursor-pointer rounded-lg bg-fill py-2.5 text-[13px] font-semibold text-inverse transition-colors hover:bg-fill-strong disabled:cursor-default disabled:opacity-60"
+              disabled={isSubmitting}
+            >
               {isSubmitting ? "Wysyłanie…" : "Dodaj zgłoszenie"}
             </button>
           </div>
@@ -186,72 +204,3 @@ export function ReportForm({ location, onClose }: ReportFormProps) {
     </div>
   );
 }
-
-const overlayStyle: CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  zIndex: 1000,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  background: "rgba(45,76,59,0.4)",
-  backdropFilter: "blur(2px)",
-  padding: 16,
-};
-
-const panelStyle: CSSProperties = {
-  width: "100%",
-  maxWidth: 360,
-  background: "#fdfbf7",
-  border: "1px solid #d8d4ce",
-  borderRadius: 16,
-  padding: 24,
-  boxShadow: "0 10px 30px rgba(45,76,59,0.25)",
-};
-
-const titleStyle: CSSProperties = { margin: 0, color: "#2d4c3b", fontSize: "1.125rem", fontWeight: 600 };
-const subtitleStyle: CSSProperties = { margin: "2px 0 16px", color: "#5a8a5c", fontSize: "0.75rem" };
-const labelStyle: CSSProperties = {
-  display: "block",
-  marginBottom: 4,
-  color: "#2d4c3b",
-  fontSize: "0.625rem",
-  fontWeight: 600,
-  textTransform: "uppercase",
-  letterSpacing: "0.05em",
-};
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: "0.8125rem",
-  color: "#2d4c3b",
-  background: "rgba(216,212,206,0.2)",
-  border: "1px solid rgba(216,212,206,0.7)",
-  borderRadius: 8,
-  boxSizing: "border-box",
-};
-const counterStyle: CSSProperties = { color: "#5a8a5c", fontSize: "0.625rem" };
-const noteStyle: CSSProperties = { color: "#5a8a5c", fontSize: "0.625rem", lineHeight: 1.5, fontWeight: 300 };
-const errorStyle: CSSProperties = { margin: "4px 0 0", color: "#b3261e", fontSize: "0.6875rem" };
-const actionsStyle: CSSProperties = { display: "flex", gap: 8, marginTop: 16 };
-const cancelStyle: CSSProperties = {
-  flex: 1,
-  padding: "10px",
-  fontSize: "0.8125rem",
-  color: "#5a8a5c",
-  background: "transparent",
-  border: "1px solid rgba(216,212,206,0.7)",
-  borderRadius: 8,
-  cursor: "pointer",
-};
-const submitStyle: CSSProperties = {
-  flex: 1,
-  padding: "10px",
-  fontSize: "0.8125rem",
-  fontWeight: 600,
-  color: "#fdfbf7",
-  background: "#5a8a5c",
-  border: "none",
-  borderRadius: 8,
-  cursor: "pointer",
-};

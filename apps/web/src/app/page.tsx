@@ -31,20 +31,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main>
       {sightings === null && (
-        <div
-          style={{
-            position: "fixed",
-            top: 16,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1000,
-            background: "#fdfbf7",
-            border: "1px solid #d8d4cb",
-            borderRadius: 8,
-            padding: "0.5rem 1rem",
-            fontSize: "0.875rem",
-          }}
-        >
+        <div className="fixed left-1/2 top-18 z-modal -translate-x-1/2 rounded-lg border border-line-strong bg-surface px-4 py-2 text-sm">
           Nie udało się pobrać zgłoszeń — sprawdź, czy API działa.
         </div>
       )}

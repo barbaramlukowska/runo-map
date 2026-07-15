@@ -5,15 +5,16 @@ import { MapContainer, Marker, Popup, TileLayer, ZoomControl, useMapEvents } fro
 import MarkerClusterGroup from "react-leaflet-markercluster";
 import { SPECIES_LABELS, type Sighting } from "@runo-map/shared";
 import { pinAgeCategory, type PinAge } from "@/lib/pin-age";
+import { COLOR } from "@/lib/tokens";
 import "leaflet/dist/leaflet.css";
 import "react-leaflet-markercluster/styles";
 
 const POLAND_CENTER: [number, number] = [52.0, 19.5];
 
 const PIN_STYLES: Record<PinAge, { background: string; iconColor: string; size: number }> = {
-  fresh: { background: "#2d4c3b", iconColor: "#fdfbf7", size: 30 },
-  recent: { background: "#5a8a5c", iconColor: "#fdfbf7", size: 24 },
-  older: { background: "#d8d4ce", iconColor: "#8a9a88", size: 20 },
+  fresh: { background: COLOR.forestMid, iconColor: COLOR.cream, size: 30 },
+  recent: { background: COLOR.forestSoft, iconColor: COLOR.cream, size: 24 },
+  older: { background: COLOR.muted, iconColor: COLOR.forestSage, size: 20 },
 };
 
 function mushroomPin(age: PinAge) {
@@ -34,7 +35,7 @@ function clusterIcon(cluster: MarkerCluster) {
   const size = count < 10 ? 36 : count < 100 ? 44 : 52;
   return divIcon({
     className: "",
-    html: `<div style="width:${size}px;height:${size}px;background:#2d4c3b;border:3px solid rgba(90,138,92,0.5);border-radius:50%;box-shadow:0 3px 10px rgba(45,76,59,0.4);display:flex;align-items:center;justify-content:center;color:#fdfbf7;font:600 ${size * 0.38}px/1 system-ui,sans-serif;">${count}</div>`,
+    html: `<div style="width:${size}px;height:${size}px;background:${COLOR.forestMid};border:3px solid rgba(90,138,92,0.5);border-radius:50%;box-shadow:0 3px 10px rgba(45,76,59,0.4);display:flex;align-items:center;justify-content:center;color:${COLOR.cream};font:600 ${size * 0.38}px/1 system-ui,sans-serif;">${count}</div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2],
   });
