@@ -11,28 +11,44 @@ onlyBuiltDependencies:
 # Supply chain (OWASP A03): pin transitive deps to advisory-free versions.
 # - postcss <8.5.23 fix: GHSA-fxqj-rqcc-2cmp, pulled in by next/vite/shadcn
 # - nanoid <3.3.18 fix: GHSA-28wg-ghj8-5hjv, GHSA-2v37-7h3g-55p8, dep of postcss
-# - brace-expansion <5.0.9 fix: GHSA-rgw5-rvv9-x895 (ReDoS)
-# - fast-uri <3.1.5 fix: GHSA-7p8r-x3mc-p8w7
-# - ip-address <10.3.1 fix: GHSA-22jq-vg5j-6vgg, GHSA-4xrf-jv44-h6hh,
-#   GHSA-mwp4-54f8-5fhr; dep of express-rate-limit (production)
+# - brace-expansion <5.0.12 fix: GHSA-rgw5-rvv9-x895, GHSA-6j4f-fj2g-mc7p,
+#   GHSA-qhr7-859c-m2p7, GHSA-q2hr-2g5m-vwhr (ReDoS)
+# - fast-uri <3.1.8 fix: GHSA-7p8r-x3mc-p8w7, GHSA-58mr-gqgx-xq4g,
+#   GHSA-qw65-cvwx-89v3, GHSA-hrr3-gc8f-f4qj
+# - ip-address <10.7.1 fix: GHSA-22jq-vg5j-6vgg, GHSA-4xrf-jv44-h6hh,
+#   GHSA-mwp4-54f8-5fhr, GHSA-h3mg-xc3c-68pw, GHSA-j6r3-76f7-8jcv;
+#   dep of express-rate-limit (production)
 # - js-yaml <4.3.1 fix: GHSA-5p4m-2wfm-xmqj, pulled in by shadcn (cosmiconfig)
-# - undici <7.29.0 fix: GHSA-4cwx-7wf7-3272 + 4 more, dev-only (shadcn CLI)
-# - hono <4.12.34 fix: GHSA-54fx-42gc-7vw4 + 3 more, dev-only (@prisma/dev, shadcn)
+# - undici <7.29.1 fix: GHSA-4cwx-7wf7-3272, GHSA-rfgv-xxqx-mfg5 + 13 more,
+#   dev-only (shadcn CLI)
+# - hono <4.13.7 fix: GHSA-54fx-42gc-7vw4, GHSA-hxh3-vqpv-xpqv + 3 more,
+#   dev-only (@prisma/dev, shadcn)
 # - deepmerge-ts <8.0.0 fix: GHSA-ggr8-5vv4-36mx, dev-only (@prisma/config);
 #   major bump, but same dual ESM/CJS exports as 7.x
 # - @hono/node-server <2.0.5 fix: GHSA-frvp-7c67-39w9, dev-only tooling
-# - sharp <0.35.0 fix: GHSA-f88m-g3jw-g9cj, optional dep of next
+# - sharp <0.35.4 fix: GHSA-f88m-g3jw-g9cj, GHSA-rgj7-g3m4-5g8c, optional dep of next
 # - valibot <1.4.2 fix: GHSA-5qjj-4xww-7phc, pulled in by @prisma/dev
+# - qs <6.16.0 fix: GHSA-4mjr-xmp4-gh2g, GHSA-x5fp-wj9c-mxmx; dep of express
+#   and body-parser (production)
+# - browserslist <4.28.7 fix: GHSA-73wf-gq98-2v4g, GHSA-c83g-rgw3-j3cx, and
+#   baseline-browser-mapping <2.11.0 fix: GHSA-w5vr-8v7q-w6rv; via @babel/core
+#   (styled-jsx peer of next, shadcn)
+# - mysql2 <3.23.1 fix: GHSA-3f6p-5ww8-9rcr, GHSA-rgwj-5xj2-c3m3; dep of prisma
+#   CLI, unused at runtime (PostgreSQL)
 overrides:
   postcss: "^8.5.23"
   nanoid: "^3.3.18"
-  brace-expansion: "^5.0.9"
-  fast-uri: "^3.1.5"
-  ip-address: "^10.3.1"
+  brace-expansion: "^5.0.12"
+  fast-uri: "^3.1.8"
+  ip-address: "^10.7.1"
   js-yaml: "^4.3.1"
-  undici: "^7.29.0"
-  hono: "^4.12.34"
+  undici: "^7.29.1"
+  hono: "^4.13.7"
   deepmerge-ts: "^8.0.0"
   "@hono/node-server": "^2.0.5"
-  sharp: "^0.35.0"
+  sharp: "^0.35.4"
   valibot: "^1.4.2"
+  qs: "^6.16.0"
+  browserslist: "^4.28.7"
+  baseline-browser-mapping: "^2.11.0"
+  mysql2: "^3.23.1"
