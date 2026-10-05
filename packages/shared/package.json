@@ -13,7 +13,7 @@
   "devDependencies": {
     "@runo-map/config": "workspace:*",
     "typescript": "^5.8.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "dependencies": {
     "zod": "^4.4.3"

@@ -1,0 +1,11 @@
+# Accepted risks for google/osv-scanner-action in CI (.github/workflows/ci.yml).
+# Prefer fixing through `overrides` in pnpm-workspace.yaml; an entry here only
+# when no fixed version exists. Each entry expires so it gets re-checked.
+
+[[IgnoredVulns]]
+# braces <=3.0.3: stack exhaustion on deeply nested patterns, no fixed release.
+# Dev-only, via shadcn CLI (fast-glob -> micromatch); it only expands globs
+# from this repo, never untrusted input.
+id = "GHSA-vfj7-8cjw-p6xm"
+ignoreUntil = 2027-01-05
+reason = "No fix released; dev-only via shadcn CLI, globs come from the repo only"
