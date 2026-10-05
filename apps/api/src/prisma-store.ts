@@ -91,8 +91,11 @@ export function createPrismaStore(prisma: PrismaClient): Store {
         step,
       );
     },
+    // A real table read, not `SELECT 1`: Supabase still sent a pause warning
+    // while `SELECT 1` ran several times a day, so it apparently does not count
+    // as user activity. A single-row LIMIT 1 read stays cheap at any table size.
     async ping(): Promise<void> {
-      await prisma.$queryRaw`SELECT 1`;
+      await prisma.sighting.findFirst({ select: { id: true } });
     },
   };
 }
