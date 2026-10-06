@@ -92,12 +92,13 @@ The web app also needs `NEXT_PUBLIC_API_URL` (browser-side POST target) in `apps
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/sightings` | list sightings; optional `species` (repeatable: `?species=KURKA&species=BOROWIK`), `from`, `to`, `bbox` filters |
+| GET | `/api/sightings` | list sightings; optional `speciesKey` (GBIF species key, repeatable: `?speciesKey=5954958&speciesKey=5249504` — porcini + chanterelle), `from`, `to`, `bbox` filters |
 | GET | `/api/sightings/:id` | single sighting |
-| POST | `/api/sightings` | report a sighting (Zod-validated, rate-limited 10/h/IP) |
-| GET | `/api/occurrence-cells` | aggregated occurrence areas for the map; required `zoom` (sets the grid step), optional `species` (repeatable), `from`, `to`, `bbox` |
+| POST | `/api/sightings` | report a sighting (Zod-validated, unknown `speciesKey` → 400, rate-limited 10/h/IP) |
+| GET | `/api/occurrence-cells` | aggregated occurrence areas for the map; required `zoom` (sets the grid step), optional `speciesKey` (repeatable), `from`, `to`, `bbox` |
+| GET | `/api/species` | species catalogue (GBIF key, scientific and Polish name, protection status), served from our DB — GBIF is never called at runtime |
 | GET | `/api/species-stats` | per-species report counts, most-reported first; drives the order of the filter list |
-| GET | `/api/health` | healthcheck |
+| GET | `/api/health` | healthcheck; reads a real table so an external keep-alive also prevents the Supabase free-tier pause |
 
 `bbox` takes `minLng,minLat,maxLng,maxLat` — the format Leaflet's `map.getBounds().toBBoxString()` produces, so the map can request only the visible area.
 
@@ -110,8 +111,9 @@ The swap in Stage 2 didn't change a single route.
 - [x] **Stage 0** — Turborepo + pnpm scaffold, shared package wired into both apps
 - [x] **Stage 1** — Express API with in-memory data, tests from day one
 - [x] **Stage 2** — PostgreSQL (Supabase) + Prisma migrations, seed, store swap
-- [x] **Stage 3** — Map UI: react-leaflet, aggregated occurrence areas, filters, freshness fading, sighting form, Tailwind design system
-- [ ] **Stage 3.5** — Deploy (Vercel + Render) and CI (GitHub Actions)
+- [x] **Stage 3** — Map UI: react-leaflet, aggregated occurrence areas, filters, freshness fading, sighting form, Tailwind design system, "my location" button
+- [x] **Species catalogue from GBIF** — ~150 Polish macrofungi with Polish names and legal protection status, refreshed monthly by a GitHub Action that opens a PR for review
+- [ ] **Stage 3.5** — Deploy (Vercel + Render) and CI (GitHub Actions) — deployed and live; remaining: hardening (DB certificate verification, structured logging, keep-alive monitoring)
 - [ ] **Stage 4** — AI assistant with tool calling (sightings + weather)
 
 ## Security
