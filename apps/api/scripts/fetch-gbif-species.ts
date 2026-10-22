@@ -37,21 +37,34 @@ const WIKIDATA_CHUNK = 120;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// One retry on "too fast" / "try again", then give up: a half-fetched run must
-// never overwrite a good artifact.
+// A run makes ~500 requests, so one dropped connection is likely, not exceptional.
+const MAX_ATTEMPTS = 3;
+
+// Retries "too fast" / "try again" and dropped connections, then gives up: a
+// half-fetched run must never overwrite a good artifact.
 async function fetchJson(url: string, init?: RequestInit): Promise<unknown> {
-  for (let attempt = 0; attempt < 2; attempt++) {
-    await sleep(attempt === 0 ? THROTTLE_MS : 3000);
-    const res = await fetch(url, {
-      ...init,
-      headers: { "User-Agent": USER_AGENT, Accept: "application/json", ...init?.headers },
-    });
-    if (res.ok) return (await res.json()) as unknown;
+  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    await sleep(attempt === 0 ? THROTTLE_MS : 3000 * attempt);
+    let res: Response;
+    let body: unknown;
+    try {
+      res = await fetch(url, {
+        ...init,
+        headers: { "User-Agent": USER_AGENT, Accept: "application/json", ...init?.headers },
+      });
+      body = res.ok ? ((await res.json()) as unknown) : undefined;
+    } catch (error) {
+      // Node's fetch reports network failures (ECONNRESET, a body cut off mid-read)
+      // as TypeError. Anything else — malformed JSON included — is not transient.
+      if (error instanceof TypeError) continue;
+      throw error;
+    }
+    if (res.ok) return body;
     if (res.status !== 429 && res.status < 500) {
       throw new Error(`${url} responded ${res.status}`);
     }
   }
-  throw new Error(`${url} kept failing after a retry`);
+  throw new Error(`${url} kept failing after ${MAX_ATTEMPTS} attempts`);
 }
 
 function readJsonFile(relativePath: string): unknown {
