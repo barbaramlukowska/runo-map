@@ -25,7 +25,10 @@ export function createApp(store: Store = createStore(demoSeed, demoSpecies)): Ex
   // origin as an array (not a plain string) makes cors omit the header for
   // any other/absent origin instead of echoing a fixed value.
   app.use(cors({ origin: [process.env.WEB_ORIGIN ?? "http://localhost:3000"] }));
-  app.use(express.json());
+  // inflate: false refuses compressed bodies (415) before they reach zlib —
+  // CVE-2026-111497 is an out-of-bounds write in Node's Brotli decoder, and the
+  // web app never sends compressed bodies anyway.
+  app.use(express.json({ inflate: false }));
 
   app.get("/api/sightings", async (req, res) => {
     const parsed = sightingFilterSchema.safeParse(req.query);
@@ -115,9 +118,22 @@ export function createApp(store: Store = createStore(demoSeed, demoSpecies)): Ex
   // Central error handler — Express recognizes it by the 4-argument signature.
   // Fail safe: log the real error server-side, never leak details to the client.
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+    // body-parser rejects bad requests (malformed JSON, compressed body) with
+    // http-errors marked expose: true — a client error, not a server fault.
+    if (isClientError(err)) {
+      res.status(err.status).json({ error: "Bad request" });
+      return;
+    }
     console.error(err);
     res.status(500).json({ error: "Internal server error" });
   });
 
   return app;
+}
+
+function isClientError(err: unknown): err is { status: number } {
+  if (typeof err !== "object" || err === null) return false;
+  if (!("expose" in err) || err.expose !== true) return false;
+  if (!("status" in err) || typeof err.status !== "number") return false;
+  return err.status >= 400 && err.status < 500;
 }

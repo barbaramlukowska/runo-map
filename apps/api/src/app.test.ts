@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import request from "supertest";
+import { brotliCompressSync } from "node:zlib";
 import { createApp } from "./app.js";
 import { demoSpecies } from "./seed.js";
 import { createStore } from "./store.js";
@@ -131,6 +132,24 @@ describe("POST /api/sightings", () => {
       .send({ ...validInput, lat: 35.0 });
 
     expect(res.status).toBe(400);
+  });
+
+  // CVE-2026-111497: Node's Brotli decoder can be exploited by a crafted body.
+  // Compressed bodies are refused before they reach zlib.
+  it("responds 415 for a Brotli-compressed body and does not save it", async () => {
+    const app = createApp();
+    const body = brotliCompressSync(JSON.stringify(validInput));
+    const before = await request(app).get("/api/sightings");
+
+    const res = await request(app)
+      .post("/api/sightings")
+      .set("Content-Type", "application/json")
+      .set("Content-Encoding", "br")
+      .send(body);
+    const after = await request(app).get("/api/sightings");
+
+    expect(res.status).toBe(415);
+    expect(after.body).toHaveLength(before.body.length);
   });
 });
 
